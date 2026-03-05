@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Pago</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container" style="max-width:860px">
+      <div class="booking-steps" id="bookingSteps"></div>
+      <div class="page-header">
+        <div class="page-header__eyebrow">Paso 6 de 6</div>
+        <h1 class="page-header__title">Método de Pago</h1>
+        <p class="page-header__sub">Selecciona cómo deseas pagar tu reserva.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:2rem;align-items:start">
+        <div>
+          <!-- Payment options -->
+          <div class="form-card">
+            <div class="form-card__title">▩ Opciones de pago</div>
+            <div class="payment-options">
+
+              <label class="pay-option selected" id="optTarjeta">
+                <input type="radio" name="pago" value="tarjeta" checked/>
+                <div class="pay-option-icon">💳</div>
+                <div class="pay-option-info">
+                  <div class="pay-option-name">Tarjeta de crédito / débito</div>
+                  <div class="pay-option-desc">Visa, Mastercard, Amex — Pago seguro SSL</div>
+                </div>
+                <div style="font-size:.65rem;color:var(--green)">✓</div>
+              </label>
+
+              <label class="pay-option" id="optPaypal">
+                <input type="radio" name="pago" value="paypal"/>
+                <div class="pay-option-icon">🅿</div>
+                <div class="pay-option-info">
+                  <div class="pay-option-name">PayPal</div>
+                  <div class="pay-option-desc">Paga con tu cuenta PayPal de forma segura</div>
+                </div>
+              </label>
+
+              <label class="pay-option" id="optTransf">
+                <input type="radio" name="pago" value="transferencia"/>
+                <div class="pay-option-icon">🏦</div>
+                <div class="pay-option-info">
+                  <div class="pay-option-name">Transferencia bancaria</div>
+                  <div class="pay-option-desc">Recibirás los datos por email en 24h</div>
+                </div>
+              </label>
+
+              <label class="pay-option" id="optHotel">
+                <input type="radio" name="pago" value="hotel"/>
+                <div class="pay-option-icon">🏨</div>
+                <div class="pay-option-info">
+                  <div class="pay-option-name">Pagar en el hotel</div>
+                  <div class="pay-option-desc">Se cargará al check-in. Solo efectivo o tarjeta.</div>
+                </div>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Card fields (shown by default) -->
+          <div class="form-card" id="cardFieldsCard">
+            <div class="form-card__title">💳 Datos de la tarjeta</div>
+            <div class="form-grid">
+              <div class="form-field form-field--full">
+                <label>Número de tarjeta <span class="req">*</span></label>
+                <input type="text" id="fCardNum" placeholder="1234 5678 9012 3456" maxlength="19"/>
+              </div>
+              <div class="form-field form-field--full">
+                <label>Titular <span class="req">*</span></label>
+                <input type="text" id="fCardName" placeholder="MARÍA GARCÍA LÓPEZ"/>
+              </div>
+              <div class="form-field">
+                <label>Fecha de caducidad <span class="req">*</span></label>
+                <input type="text" id="fCardExp" placeholder="MM/AA" maxlength="5"/>
+              </div>
+              <div class="form-field">
+                <label>CVV <span class="req">*</span></label>
+                <input type="text" id="fCardCvv" placeholder="123" maxlength="4"/>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem;margin-top:1rem;font-size:.6rem;color:var(--muted)">
+              <span style="font-size:1rem">🔒</span> Pago cifrado con SSL. Tus datos están seguros.
+            </div>
+          </div>
+
+          <!-- PayPal placeholder -->
+          <div class="form-card" id="paypalCard" style="display:none">
+            <div class="form-card__title">🅿 PayPal</div>
+            <div style="text-align:center;padding:1.5rem">
+              <div style="font-size:2rem;margin-bottom:.8rem;opacity:.6">🅿</div>
+              <p style="font-size:.72rem;color:var(--muted)">Serás redirigido a PayPal para completar el pago de forma segura.</p>
+            </div>
+          </div>
+
+          <!-- Transfer placeholder -->
+          <div class="form-card" id="transfCard" style="display:none">
+            <div class="form-card__title">🏦 Transferencia bancaria</div>
+            <div style="background:var(--bg-3);border-radius:var(--radius-sm);padding:1rem;font-size:.72rem;line-height:1.8;color:var(--muted)">
+              <div><strong style="color:var(--white)">IBAN:</strong> ES12 3456 7890 1234 5678 9012</div>
+              <div><strong style="color:var(--white)">BIC/SWIFT:</strong> LUXOESMMXXX</div>
+              <div><strong style="color:var(--white)">Titular:</strong> LUXORIA CADENA HOTELERA S.L.</div>
+              <div style="margin-top:.5rem;font-size:.62rem;color:var(--gold)">Incluye el número de reserva como concepto. La reserva se confirmará al recibir el pago.</div>
+            </div>
+          </div>
+
+          <!-- Hotel pay notice -->
+          <div class="form-card" id="hotelCard" style="display:none">
+            <div class="form-card__title">🏨 Pago en el hotel</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.7">
+              Pagarás directamente en la recepción al hacer el check-in.<br/>
+              Aceptamos <strong style="color:var(--white)">efectivo, tarjeta y débito</strong>.<br/>
+              <span style="color:var(--gold)">Se requiere tarjeta como garantía al registrarse.</span>
+            </div>
+          </div>
+
+          <button class="btn-full" id="btnPagar">Confirmar y pagar <span id="btnTotal"></span></button>
+          <a href="confirmacion.html" class="btn-secondary">← Revisar reserva</a>
+        </div>
+
+        <!-- Summary sidebar -->
+        <div class="order-summary">
+          <div class="os-title">Total a pagar</div>
+          <div class="os-hotel-name" id="sideHotel"></div>
+          <div class="os-room" id="sideRoom"></div>
+          <div class="os-dates">
+            <div class="os-date"><div class="os-date-label">Entrada</div><div class="os-date-val" id="sideEntrada"></div></div>
+            <div class="os-date"><div class="os-date-label">Salida</div><div class="os-date-val" id="sideSalida"></div></div>
+          </div>
+          <div class="os-divider"></div>
+          <div class="os-line"><span>Subtotal</span><strong id="sideSubtotal">—</strong></div>
+          <div class="os-line"><span id="sideIvaLabel">IVA</span><strong id="sideIva">—</strong></div>
+          <div class="os-divider"></div>
+          <div class="os-total"><span>TOTAL</span><strong id="sideTotal">—</strong></div>
+          <div id="sideSeason" style="margin-top:.6rem"></div>
+          <div style="margin-top:1rem;font-size:.6rem;color:var(--muted);text-align:center;line-height:1.6">🔒 Pago seguro · Garantía LUXORIA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Processing overlay -->
+  <div id="processingOverlay" style="display:none;position:fixed;inset:0;background:rgba(8,8,16,.92);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem">
+    <div style="font-size:2rem;animation:spin 1.2s linear infinite">◈</div>
+    <div style="font-size:.75rem;color:var(--muted);letter-spacing:.1em">Procesando pago…</div>
+    <style>@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+  </div>
+
+  <div id="clientToasts" class="toast-container"></div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, seasonBadge, fmtEur, buildClientNav, renderBookingSteps, saveReservation, showToast } = LuxClient;
+  buildClientNav();
+  renderBookingSteps(document.getElementById('bookingSteps'), 6);
+
+  const sess = BookingSession.get();
+  if (!sess.hotelId || !sess.nombre) window.location.href = 'huesped.html';
+
+  const hotel = Data.hotelById(sess.hotelId), tipo = Data.tipoById(sess.tipoId);
+  document.getElementById('sideHotel').textContent    = hotel?.nombre || '—';
+  document.getElementById('sideRoom').textContent     = tipo?.nombre || '—';
+  document.getElementById('sideEntrada').textContent  = DateUtil.fmtShort(sess.entrada);
+  document.getElementById('sideSalida').textContent   = DateUtil.fmtShort(sess.salida);
+  document.getElementById('sideSubtotal').textContent = fmtEur(sess.subtotal);
+  document.getElementById('sideIvaLabel').textContent = `IVA (${sess.ivaRate}%)`;
+  document.getElementById('sideIva').textContent      = fmtEur(sess.ivaAmt);
+  document.getElementById('sideTotal').textContent    = fmtEur(sess.total);
+  document.getElementById('btnTotal').textContent     = fmtEur(sess.total);
+  if (sess.temporadaNombre) document.getElementById('sideSeason').innerHTML = seasonBadge({nombre:sess.temporadaNombre,tipo:sess.temporadaTipo});
+
+  /* Payment method toggle */
+  document.querySelectorAll('.pay-option input[type=radio]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('selected'));
+      radio.closest('.pay-option').classList.add('selected');
+      document.getElementById('cardFieldsCard').style.display = radio.value === 'tarjeta' ? 'block' : 'none';
+      document.getElementById('paypalCard').style.display     = radio.value === 'paypal' ? 'block' : 'none';
+      document.getElementById('transfCard').style.display     = radio.value === 'transferencia' ? 'block' : 'none';
+      document.getElementById('hotelCard').style.display      = radio.value === 'hotel' ? 'block' : 'none';
+      document.getElementById('btnPagar').textContent = radio.value === 'paypal' ? 'Continuar a PayPal ›' : `Confirmar y pagar ${fmtEur(sess.total)}`;
+    });
+  });
+
+  /* Card number formatting */
+  document.getElementById('fCardNum').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g,'').replace(/(\d{4})/g,'$1 ').trim().slice(0,19);
+  });
+  document.getElementById('fCardExp').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g,'').replace(/(\d{2})(\d)/,'$1/$2').slice(0,5);
+  });
+
+  /* Pay action */
+  document.getElementById('btnPagar').addEventListener('click', () => {
+    const metodo = document.querySelector('input[name=pago]:checked')?.value || 'tarjeta';
+    if (metodo === 'tarjeta') {
+      const num  = document.getElementById('fCardNum').value.replace(/\s/g,'');
+      const name = document.getElementById('fCardName').value.trim();
+      const exp  = document.getElementById('fCardExp').value;
+      const cvv  = document.getElementById('fCardCvv').value;
+      if (num.length < 16 || !name || exp.length < 5 || cvv.length < 3) {
+        showToast('Por favor completa todos los datos de la tarjeta.', 'error');
+        return;
+      }
+    }
+    /* Show processing */
+    const ov = document.getElementById('processingOverlay');
+    ov.style.display = 'flex';
+    BookingSession.set({ metodoPago: metodo });
+    setTimeout(() => {
+      const num = saveReservation(sess);
+      BookingSession.set({ reservaNum: num });
+      window.location.href = 'reserva-exitosa.html';
+    }, 2200);
+  });
+  </script>
+</body>
+</html>

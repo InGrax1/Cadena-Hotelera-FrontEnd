@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXORIA — Gestión de Categorías</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <span class="nav__logo-icon">◈</span>
+      <span class="nav__logo-text">LUXORIA</span>
+      <span class="sidebar__badge">Admin</span>
+    </div>
+    <nav class="sidebar__nav">
+      <span class="sidebar__group-label">Principal</span>
+      <a href="index.html" class="sidebar__link">
+        <span class="sl-icon">⌂</span> Landing Page
+      </a>
+      <span class="sidebar__group-label">Gestión</span>
+      <a href="hoteles.html" class="sidebar__link">
+        <span class="sl-icon">▣</span> Hoteles
+      </a>
+      <a href="categorias.html" class="sidebar__link sidebar__link--active">
+        <span class="sl-icon">◇</span> Categorías
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◎</span> Habitaciones <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◈</span> Reservas <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">⬡</span> Huéspedes <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◉</span> Facturación <span class="soon-tag">pronto</span>
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar">A</div>
+        <div>
+          <div class="sidebar__uname">Admin</div>
+          <div class="sidebar__urole">Superusuario</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─────────────────────────────────────────────────── -->
+  <main class="admin-main">
+
+    <!-- Top bar -->
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebarToggle">☰</button>
+      <div class="topbar-breadcrumb">
+        <span class="tb-muted">Admin</span>
+        <span class="tb-sep">›</span>
+        <span>Gestión de Categorías</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date" id="topbarDate"></span>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <div class="admin-content">
+
+      <!-- ── KPI CARDS ─────────────────────────────────────────── -->
+      <div class="kpi-grid">
+        <div class="kpi-card reveal">
+          <div class="kpi-icon" style="color:var(--gold)">◇</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Categorías activas</span>
+            <span class="kpi-value" id="kpiTotal">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="60">
+          <div class="kpi-icon" style="color:var(--green)">⭑</div>
+          <div class="kpi-body">
+            <span class="kpi-label">IVA más alto</span>
+            <span class="kpi-value" id="kpiIvaMax">—</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="120">
+          <div class="kpi-icon" style="color:var(--blue)">▣</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Hoteles clasificados</span>
+            <span class="kpi-value" data-count="6">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="180">
+          <div class="kpi-icon" style="color:#e05c5c">◈</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Estrellas máximas</span>
+            <span class="kpi-value" data-count="5">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CONTENT GRID ──────────────────────────────────────── -->
+      <div class="content-grid">
+
+        <!-- Table panel -->
+        <div class="panel panel--wide reveal">
+          <div class="panel__header">
+            <div class="panel__title">
+              <span class="panel-icon">◇</span>
+              Categorías registradas
+            </div>
+            <div class="panel__tools">
+              <div class="search-box">
+                <span class="search-icon">◎</span>
+                <input type="text" id="searchInput" placeholder="Buscar categoría..." />
+              </div>
+              <button class="btn-admin btn-admin--primary" id="btnNuevo">
+                <span>+</span> Nueva categoría
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="admin-table" id="catTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Estrellas</th>
+                  <th>Tipo de IVA</th>
+                  <th>% IVA</th>
+                  <th>Hoteles asignados</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="catTableBody">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span class="table-count" id="tableCount">Mostrando 0 categorías</span>
+          </div>
+        </div>
+
+        <!-- Cards panel: visual category display -->
+        <div class="panel reveal" data-delay="80">
+          <div class="panel__header">
+            <div class="panel__title">
+              <span class="panel-icon">⭑</span>
+              Vista de tarjetas
+            </div>
+          </div>
+          <div class="cat-cards" id="catCards">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── IVA BREAKDOWN ─────────────────────────────────────── -->
+      <div class="panel reveal" style="margin-top:1.5rem" data-delay="100">
+        <div class="panel__header">
+          <div class="panel__title"><span class="panel-icon">◉</span> Distribución de IVA por categoría</div>
+        </div>
+        <div class="iva-chart-wrap">
+          <div class="iva-bars" id="ivaBars">
+            <!-- Filled by JS -->
+          </div>
+          <div class="iva-legend" id="ivaLegend">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ─── MODAL: CREAR / EDITAR ─────────────────────────────────── -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="catModal">
+      <div class="modal__header">
+        <div class="modal__title" id="modalTitle">Nueva Categoría</div>
+        <button class="modal__close" id="modalClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="catForm" class="admin-form" novalidate>
+          <input type="hidden" id="fId" />
+
+          <div class="form-grid-2">
+            <div class="admin-field admin-field--full">
+              <label for="fNombre">Nombre de categoría <span class="req">*</span></label>
+              <input type="text" id="fNombre" placeholder="Ej. Cuatro Estrellas Superior" required />
+              <span class="field-err" id="errNombre"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fEstrellas">Número de estrellas <span class="req">*</span></label>
+              <select id="fEstrellas" required>
+                <option value="">Seleccionar…</option>
+                <option value="1">⭑ 1 Estrella</option>
+                <option value="2">⭑⭑ 2 Estrellas</option>
+                <option value="3">⭑⭑⭑ 3 Estrellas</option>
+                <option value="4">⭑⭑⭑⭑ 4 Estrellas</option>
+                <option value="5">⭑⭑⭑⭑⭑ 5 Estrellas</option>
+              </select>
+              <span class="field-err" id="errEstrellas"></span>
+            </div>
+            <div class="admin-field">
+              <label for="fTipoIva">Tipo de IVA <span class="req">*</span></label>
+              <select id="fTipoIva" required>
+                <option value="">Seleccionar…</option>
+                <option value="Reducido">Reducido</option>
+                <option value="General">General</option>
+                <option value="Superreducido">Superreducido</option>
+              </select>
+              <span class="field-err" id="errTipoIva"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fPorcentajeIva">Porcentaje IVA (%) <span class="req">*</span></label>
+              <input type="number" id="fPorcentajeIva" placeholder="10" min="0" max="100" step="0.1" required />
+              <span class="field-err" id="errPorcentajeIva"></span>
+            </div>
+            <div class="admin-field">
+              <label for="fDescripcion">Descripción</label>
+              <input type="text" id="fDescripcion" placeholder="Breve descripción…" />
+            </div>
+          </div>
+
+          <!-- Star preview -->
+          <div class="star-preview" id="starPreview">
+            <span class="sp-label">Vista previa:</span>
+            <span class="sp-stars" id="spStars">—</span>
+            <span class="sp-iva" id="spIva"></span>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="btnCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--primary" id="btnGuardar">Guardar categoría</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── MODAL: CONFIRMAR ELIMINAR ────────────────────────────── -->
+  <div class="modal-backdrop" id="deleteBackdrop">
+    <div class="modal modal--sm" id="deleteModal">
+      <div class="modal__header">
+        <div class="modal__title">Eliminar categoría</div>
+        <button class="modal__close" id="deleteClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="delete-confirm">
+          <div class="delete-icon">⚠</div>
+          <p>¿Eliminar <strong id="deleteCatName"></strong>?</p>
+          <p class="delete-sub">Los hoteles asignados quedarán sin categoría.</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="deleteCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--danger" id="deleteConfirm">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TOAST ─────────────────────────────────────────────────── -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/categorias.js"></script>
+</body>
+</html>

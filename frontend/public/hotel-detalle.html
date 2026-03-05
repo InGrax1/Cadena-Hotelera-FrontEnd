@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Hotel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+
+  <div class="client-page" style="padding-top:0">
+    <!-- Gallery -->
+    <div class="hotel-detail-gallery" id="hotelGallery" style="margin:var(--client-nav-h) 0 0;border-radius:0"></div>
+
+    <div class="client-container">
+      <!-- Header -->
+      <div style="margin-bottom:2rem">
+        <div id="hotelStars" style="color:var(--star-color);font-size:.85rem;letter-spacing:.1rem;margin-bottom:.4rem"></div>
+        <h1 id="hotelName" style="font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:300;color:var(--white);letter-spacing:.02em;margin-bottom:.3rem"></h1>
+        <div id="hotelLocation" style="font-size:.75rem;color:var(--muted)"></div>
+      </div>
+
+      <div class="hotel-detail-layout">
+        <!-- Main content -->
+        <div class="hotel-detail-main">
+          <!-- Tabs -->
+          <div class="detail-tabs">
+            <button class="detail-tab active" data-tab="info">Información</button>
+            <button class="detail-tab" data-tab="servicios">Servicios</button>
+            <button class="detail-tab" data-tab="habitaciones">Habitaciones</button>
+            <button class="detail-tab" data-tab="ubicacion">Ubicación</button>
+            <button class="detail-tab" data-tab="opiniones">Opiniones</button>
+          </div>
+
+          <!-- INFO -->
+          <div class="tab-panel active" id="tab-info">
+            <div class="section-eyebrow">Sobre el hotel</div>
+            <p id="hotelDesc" style="font-size:.8rem;color:var(--muted);line-height:1.9;margin-bottom:2rem;font-style:italic;font-family:var(--font-serif);font-size:1rem"></p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+              <div style="background:var(--bg-2);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);padding:1.2rem;text-align:center">
+                <div style="font-size:1.5rem;color:var(--gold);margin-bottom:.3rem">▣</div>
+                <div id="hotelHabs" style="font-size:1.2rem;font-weight:700;color:var(--white)">—</div>
+                <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Habitaciones</div>
+              </div>
+              <div style="background:var(--bg-2);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);padding:1.2rem;text-align:center">
+                <div style="font-size:1.5rem;color:var(--gold);margin-bottom:.3rem">◈</div>
+                <div id="hotelCat" style="font-size:1.2rem;font-weight:700;color:var(--white)">—</div>
+                <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Categoría</div>
+              </div>
+              <div style="background:var(--bg-2);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);padding:1.2rem;text-align:center">
+                <div style="font-size:1.5rem;color:var(--gold);margin-bottom:.3rem">◉</div>
+                <div id="hotelRating" style="font-size:1.2rem;font-weight:700;color:var(--white)">—</div>
+                <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Valoración</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SERVICIOS -->
+          <div class="tab-panel" id="tab-servicios">
+            <div class="section-eyebrow">Nuestros servicios</div>
+            <div class="amenities-grid" id="amenitiesGrid"></div>
+          </div>
+
+          <!-- HABITACIONES -->
+          <div class="tab-panel" id="tab-habitaciones">
+            <div class="section-eyebrow">Habitaciones disponibles</div>
+            <div id="roomsList"></div>
+          </div>
+
+          <!-- UBICACIÓN -->
+          <div class="tab-panel" id="tab-ubicacion">
+            <div class="section-eyebrow">Ubicación</div>
+            <div id="hotelAddress" style="font-size:.75rem;color:var(--muted);margin-bottom:1rem"></div>
+            <div class="map-placeholder">
+              <div class="map-pin">◈</div>
+              <span id="mapLabel">—</span>
+              <span style="font-size:.6rem">Mapa interactivo disponible al reservar</span>
+            </div>
+          </div>
+
+          <!-- OPINIONES -->
+          <div class="tab-panel" id="tab-opiniones">
+            <div class="section-eyebrow">Opiniones de huéspedes</div>
+            <div id="reviewsList"></div>
+          </div>
+        </div>
+
+        <!-- Sidebar booking widget -->
+        <div class="hotel-detail-sidebar">
+          <div class="booking-widget">
+            <div class="bw-price-display">
+              <div class="bw-from">Precio desde</div>
+              <div class="bw-price" id="bwPrice">— <span>/ noche</span></div>
+              <div id="bwSeason" style="font-size:.6rem;margin-top:.3rem"></div>
+            </div>
+            <div class="bw-fields">
+              <div class="bw-grid">
+                <div class="bw-field">
+                  <label>Entrada</label>
+                  <input type="date" id="bwEntrada"/>
+                </div>
+                <div class="bw-field">
+                  <label>Salida</label>
+                  <input type="date" id="bwSalida"/>
+                </div>
+              </div>
+              <div class="bw-field">
+                <label>Huéspedes</label>
+                <select id="bwHuespedes">
+                  <option value="1">1 persona</option>
+                  <option value="2" selected>2 personas</option>
+                  <option value="3">3 personas</option>
+                  <option value="4">4 personas</option>
+                </select>
+              </div>
+            </div>
+            <button class="bw-btn" id="bwReservar">Ver habitaciones disponibles</button>
+            <div class="bw-notes">Cancelación gratuita hasta 48h antes · Sin cargos ocultos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="clientToasts" class="toast-container"></div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, renderStars, seasonBadge, fmtEur, buildClientNav, showToast } = LuxClient;
+  buildClientNav('hoteles');
+
+  const params = new URLSearchParams(window.location.search);
+  const hotelId = parseInt(params.get('id')) || BookingSession.get().hotelId || 1;
+  const hotel   = Data.hotelById(hotelId);
+  if (!hotel) { window.location.href = 'busqueda.html'; }
+
+  const sess = BookingSession.get();
+  const today = DateUtil.today(), tomorrow = DateUtil.addDays(today, 1);
+  document.getElementById('bwEntrada').value = sess.entrada || today;
+  document.getElementById('bwSalida').value  = sess.salida  || tomorrow;
+  document.getElementById('bwHuespedes').value = sess.huespedes || '2';
+
+  /* Gallery */
+  const gallery = document.getElementById('hotelGallery');
+  const imgs = hotel.imgs || [hotel.img];
+  gallery.innerHTML = imgs.slice(0,5).map((img, i) => `
+    <div class="hd-gal-img" style="${i===0?'':''}">
+      <img src="${img}" alt="${hotel.nombre} ${i+1}" loading="${i>0?'lazy':'eager'}"/>
+      ${i===4 && imgs.length>5 ? `<div class="hd-gal-more">+${imgs.length-5} fotos</div>` : ''}
+    </div>`).join('');
+
+  /* Header */
+  document.getElementById('hotelStars').textContent = renderStars(hotel.categoria);
+  document.getElementById('hotelName').textContent  = hotel.nombre;
+  document.getElementById('hotelLocation').textContent = `◎ ${hotel.ciudad}, ${hotel.pais}`;
+  document.getElementById('hotelDesc').textContent  = hotel.descripcion || '';
+  document.getElementById('hotelHabs').textContent  = hotel.habitaciones || '—';
+  document.getElementById('hotelCat').textContent   = `${hotel.categoria} Estrellas`;
+  document.getElementById('hotelRating').textContent= Data.rating(hotelId) + ' / 10';
+
+  /* Update price in widget */
+  function updateWidgetPrice() {
+    const entrada = document.getElementById('bwEntrada').value;
+    const tipos = Data.tipos();
+    let minPrecio = null;
+    let minTemp = null;
+    tipos.forEach(t => {
+      const tar = Data.getTarifa(hotelId, t.id, entrada);
+      if (tar && (minPrecio === null || tar.precio < minPrecio)) {
+        minPrecio = tar.precio;
+        minTemp = tar.temporada;
+      }
+    });
+    document.getElementById('bwPrice').innerHTML = minPrecio
+      ? `${fmtEur(minPrecio)} <span>/ noche</span>`
+      : `— <span>/ noche</span>`;
+    document.getElementById('bwSeason').innerHTML = minTemp ? seasonBadge(minTemp) : '';
+  }
+  document.getElementById('bwEntrada').addEventListener('change', updateWidgetPrice);
+  updateWidgetPrice();
+
+  /* Tabs */
+  document.querySelectorAll('.detail-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* Amenities */
+  const AMENITIES = [
+    ['🏊','Piscina infinita'],['🧖','Spa de lujo'],['◎','Wi-Fi 5G'],['🍽','Restaurante gourmet'],
+    ['🏋','Gym 24h'],['🅿','Parking VIP'],['🚖','Transfer aeropuerto'],['👔','Business center'],
+    ['🐾','Pet friendly'],['♿','Accesible'],['🌿','Jardines privados'],['🎭','Salón de eventos'],
+  ];
+  document.getElementById('amenitiesGrid').innerHTML = AMENITIES.map(([icon, label]) =>
+    `<div class="amenity-tag"><span>${icon}</span><span>${label}</span></div>`).join('');
+
+  /* Rooms */
+  const tipos = Data.tipos();
+  const entrada = document.getElementById('bwEntrada').value;
+  const huesped = parseInt(document.getElementById('bwHuespedes').value);
+  const ROOM_IMGS = {
+    1:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80',
+    2:'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&q=80',
+    3:'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600&q=80',
+    4:'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80',
+    5:'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80',
+    6:'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&q=80',
+    7:'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=600&q=80',
+  };
+  const FEATURES = {
+    1:['Cama King','Wi-Fi','Escritorio','Vista ciudad'],
+    2:['Cama King o Twin','Wi-Fi','Bañera','Mini bar'],
+    3:['3 camas','Wi-Fi','Sofá','Nevera'],
+    4:['Sala de estar','Jacuzzi','Butler','Mini bar VIP'],
+    5:['Zona salón','Ducha lluvia','Wi-Fi','Bañera'],
+    6:['Varias habitaciones','Butler 24h','Terraza privada','Champán'],
+    7:['4 camas','Cocina','Salón familiar','Wi-Fi'],
+  };
+  const availableRooms = tipos.filter(t => {
+    const tar = Data.getTarifa(hotelId, t.id, entrada);
+    return !!tar && t.capacidad >= 1;
+  });
+  document.getElementById('roomsList').innerHTML = availableRooms.length
+    ? availableRooms.map(t => {
+        const tar = Data.getTarifa(hotelId, t.id, entrada);
+        const feats = FEATURES[t.id] || t.features || [];
+        return `
+          <div class="room-card">
+            <div class="room-card__img">
+              <img src="${ROOM_IMGS[t.id]||ROOM_IMGS[1]}" alt="${t.nombre}" loading="lazy"/>
+            </div>
+            <div class="room-card__body">
+              <div class="room-card__name">${t.icono||'◎'} ${t.nombre}</div>
+              <div class="room-card__cap">Hasta ${t.capacidad} persona${t.capacidad>1?'s':''}</div>
+              <div class="room-card__features">
+                ${feats.map(f => `<span class="room-feature-tag">${f}</span>`).join('')}
+              </div>
+              <div class="room-card__footer">
+                <div class="room-price-block">
+                  <div class="room-price-label">Precio por noche</div>
+                  <div class="room-price">${fmtEur(tar.precio)} <span>/ noche</span></div>
+                  ${tar.temporada ? `<div class="room-season">${tar.temporada.tipo === 'Alta' ? '☀' : tar.temporada.tipo === 'Baja' ? '❄' : '⟳'} ${tar.temporada.nombre}</div>` : ''}
+                </div>
+                <a class="btn-reserve" href="habitaciones.html?hotel=${hotelId}&tipo=${t.id}">Seleccionar ›</a>
+              </div>
+            </div>
+          </div>`;
+      }).join('')
+    : '<p style="color:var(--muted);font-size:.75rem">No hay habitaciones con tarifa disponible para este hotel.</p>';
+
+  /* Map */
+  document.getElementById('hotelAddress').textContent = `${hotel.ciudad}, ${hotel.pais}`;
+  document.getElementById('mapLabel').textContent = `${hotel.nombre} · ${hotel.ciudad}`;
+
+  /* Reviews */
+  const REVIEWS = [
+    { name:'Sophie M.', date:'Oct 2025', rating:5, text:'Una experiencia absolutamente extraordinaria. El personal anticipaba cada necesidad, las instalaciones impecables. Definitivamente volveré.' },
+    { name:'Carlos R.',  date:'Sep 2025', rating:5, text:'Superó todas nuestras expectativas. La suite con jacuzzi privado fue mágica. La gastronomía, de nivel Michelin.' },
+    { name:'Ahmed K.',   date:'Ago 2025', rating:4, text:'Hotel de primera clase. El spa es el mejor que he visitado. Solo le faltó un poco más de opciones vegetarianas en el restaurante.' },
+    { name:'Elena P.',   date:'Jul 2025', rating:5, text:'El personal habla varios idiomas y fue extremadamente amable. La localización, perfecta. Repetiré sin duda.' },
+  ];
+  document.getElementById('reviewsList').innerHTML = REVIEWS.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar">${r.name[0]}</div>
+        <div class="review-meta"><div class="review-name">${r.name}</div><div class="review-date">${r.date}</div></div>
+        <div class="review-stars">${'⭑'.repeat(r.rating)}</div>
+      </div>
+      <div class="review-text">"${r.text}"</div>
+    </div>`).join('');
+
+  /* Booking widget action */
+  document.getElementById('bwReservar').addEventListener('click', () => {
+    const entrada = document.getElementById('bwEntrada').value;
+    const salida  = document.getElementById('bwSalida').value;
+    if (!entrada || !salida) { showToast('Por favor selecciona fechas de entrada y salida.', 'error'); return; }
+    if (salida <= entrada)   { showToast('La salida debe ser posterior a la entrada.', 'error'); return; }
+    BookingSession.set({ hotelId, entrada, salida, huespedes: document.getElementById('bwHuespedes').value });
+    document.querySelector('[data-tab="habitaciones"]').click();
+    document.getElementById('tab-habitaciones').scrollIntoView({ behavior:'smooth' });
+  });
+
+  document.title = `LUXORIA — ${hotel.nombre}`;
+  </script>
+</body>
+</html>

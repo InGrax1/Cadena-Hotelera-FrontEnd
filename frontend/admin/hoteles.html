@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXORIA — Gestión de Hoteles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <span class="nav__logo-icon">◈</span>
+      <span class="nav__logo-text">LUXORIA</span>
+      <span class="sidebar__badge">Admin</span>
+    </div>
+    <nav class="sidebar__nav">
+      <span class="sidebar__group-label">Principal</span>
+      <a href="index.html" class="sidebar__link">
+        <span class="sl-icon">⌂</span> Landing Page
+      </a>
+      <span class="sidebar__group-label">Gestión</span>
+      <a href="hoteles.html" class="sidebar__link sidebar__link--active">
+        <span class="sl-icon">▣</span> Hoteles
+      </a>
+      <a href="categorias.html" class="sidebar__link">
+        <span class="sl-icon">◇</span> Categorías
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◎</span> Habitaciones <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◈</span> Reservas <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">⬡</span> Huéspedes <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◉</span> Facturación <span class="soon-tag">pronto</span>
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar">A</div>
+        <div>
+          <div class="sidebar__uname">Admin</div>
+          <div class="sidebar__urole">Superusuario</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─────────────────────────────────────────────────── -->
+  <main class="admin-main">
+
+    <!-- Top bar -->
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebarToggle">☰</button>
+      <div class="topbar-breadcrumb">
+        <span class="tb-muted">Admin</span>
+        <span class="tb-sep">›</span>
+        <span>Gestión de Hoteles</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date" id="topbarDate"></span>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <div class="admin-content">
+
+      <!-- ── KPI CARDS ─────────────────────────────────────────── -->
+      <div class="kpi-grid">
+        <div class="kpi-card reveal">
+          <div class="kpi-icon" style="color:var(--gold)">▣</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Total Hoteles</span>
+            <span class="kpi-value" data-count="6">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="60">
+          <div class="kpi-icon" style="color:var(--blue)">◇</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Categorías activas</span>
+            <span class="kpi-value" data-count="3">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="120">
+          <div class="kpi-icon" style="color:var(--green)">◈</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Habitaciones totales</span>
+            <span class="kpi-value" data-count="248">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="180">
+          <div class="kpi-icon" style="color:#e05c5c">⬡</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Añadidos este mes</span>
+            <span class="kpi-value" data-count="2">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CONTENT GRID ──────────────────────────────────────── -->
+      <div class="content-grid">
+
+        <!-- Table panel -->
+        <div class="panel panel--wide reveal">
+          <div class="panel__header">
+            <div class="panel__title">
+              <span class="panel-icon">▣</span>
+              Hoteles registrados
+            </div>
+            <div class="panel__tools">
+              <div class="search-box">
+                <span class="search-icon">◎</span>
+                <input type="text" id="searchInput" placeholder="Buscar hotel..." />
+              </div>
+              <select class="admin-select" id="filterCat">
+                <option value="">Todas las categorías</option>
+                <option value="3">⭑⭑⭑ 3 Estrellas</option>
+                <option value="4">⭑⭑⭑⭑ 4 Estrellas</option>
+                <option value="5">⭑⭑⭑⭑⭑ 5 Estrellas</option>
+              </select>
+              <button class="btn-admin btn-admin--primary" id="btnNuevo">
+                <span>+</span> Nuevo hotel
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="admin-table" id="hotelTable">
+              <thead>
+                <tr>
+                  <th data-col="id">ID <span class="th-sort">↕</span></th>
+                  <th data-col="nombre">Nombre <span class="th-sort">↕</span></th>
+                  <th data-col="ciudad">Ciudad</th>
+                  <th data-col="telefono">Teléfono</th>
+                  <th data-col="anio">Año</th>
+                  <th data-col="categoria">Categoría</th>
+                  <th data-col="habitaciones">Hab.</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="hotelTableBody">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span class="table-count" id="tableCount">Mostrando 0 hoteles</span>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+
+        <!-- Detail / Stats panel -->
+        <div class="panel reveal" data-delay="80" id="detailPanel">
+          <div class="panel__header">
+            <div class="panel__title">
+              <span class="panel-icon">◎</span>
+              Detalles
+            </div>
+          </div>
+          <div class="detail-placeholder" id="detailPlaceholder">
+            <div class="detail-ph-icon">▣</div>
+            <p>Selecciona un hotel<br/>para ver sus detalles</p>
+          </div>
+          <div class="detail-content" id="detailContent" style="display:none">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ─── MODAL: CREAR / EDITAR ─────────────────────────────────── -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="hotelModal">
+      <div class="modal__header">
+        <div class="modal__title" id="modalTitle">Nuevo Hotel</div>
+        <button class="modal__close" id="modalClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="hotelForm" class="admin-form" novalidate>
+          <input type="hidden" id="fId" />
+
+          <div class="form-grid-2">
+            <div class="admin-field admin-field--full">
+              <label for="fNombre">Nombre del hotel <span class="req">*</span></label>
+              <input type="text" id="fNombre" placeholder="Ej. Grand Luxoria Madrid" required />
+              <span class="field-err" id="errNombre"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field admin-field--full">
+              <label for="fDireccion">Dirección <span class="req">*</span></label>
+              <input type="text" id="fDireccion" placeholder="Calle, número, ciudad, país" required />
+              <span class="field-err" id="errDireccion"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fTelefono">Teléfono <span class="req">*</span></label>
+              <input type="tel" id="fTelefono" placeholder="+34 900 123 456" required />
+              <span class="field-err" id="errTelefono"></span>
+            </div>
+            <div class="admin-field">
+              <label for="fAnio">Año de construcción <span class="req">*</span></label>
+              <input type="number" id="fAnio" placeholder="1990" min="1800" max="2099" required />
+              <span class="field-err" id="errAnio"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fCategoria">Categoría <span class="req">*</span></label>
+              <select id="fCategoria" required>
+                <option value="">Seleccionar…</option>
+                <option value="1">⭑ 1 Estrella</option>
+                <option value="2">⭑⭑ 2 Estrellas</option>
+                <option value="3">⭑⭑⭑ 3 Estrellas</option>
+                <option value="4">⭑⭑⭑⭑ 4 Estrellas</option>
+                <option value="5">⭑⭑⭑⭑⭑ 5 Estrellas</option>
+              </select>
+              <span class="field-err" id="errCategoria"></span>
+            </div>
+            <div class="admin-field">
+              <label for="fHabitaciones">N.º habitaciones</label>
+              <input type="number" id="fHabitaciones" placeholder="80" min="1" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fEmail">Email de contacto</label>
+              <input type="email" id="fEmail" placeholder="hotel@luxoria.com" />
+            </div>
+            <div class="admin-field">
+              <label for="fWeb">Sitio web</label>
+              <input type="url" id="fWeb" placeholder="https://luxoria.com/madrid" />
+            </div>
+          </div>
+
+          <div class="admin-field">
+            <label for="fNotas">Notas adicionales</label>
+            <textarea id="fNotas" rows="3" placeholder="Información adicional sobre el hotel…"></textarea>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="btnCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--primary" id="btnGuardar">
+          <span id="btnGuardarText">Guardar hotel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── MODAL: CONFIRMAR ELIMINAR ────────────────────────────── -->
+  <div class="modal-backdrop" id="deleteBackdrop">
+    <div class="modal modal--sm" id="deleteModal">
+      <div class="modal__header">
+        <div class="modal__title">Eliminar hotel</div>
+        <button class="modal__close" id="deleteClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="delete-confirm">
+          <div class="delete-icon">⚠</div>
+          <p>¿Estás seguro de que deseas eliminar <strong id="deleteHotelName"></strong>?</p>
+          <p class="delete-sub">Esta acción no se puede deshacer.</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="deleteCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--danger" id="deleteConfirm">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TOAST ─────────────────────────────────────────────────── -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/hoteles.js"></script>
+</body>
+</html>

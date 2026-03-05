@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXORIA — Cadena Hotelera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ─── NAV ──────────────────────────────────────────────────── -->
+  <nav class="nav" id="nav">
+    <div class="nav__logo">
+      <span class="nav__logo-icon">◈</span>
+      <span class="nav__logo-text">LUXORIA</span>
+    </div>
+    <ul class="nav__links">
+      <li><a href="#hoteles">Hoteles</a></li>
+      <li><a href="#reservas">Reservas</a></li>
+      <li><a href="#categorias">Categorías</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a href="#reservas" class="nav__cta">Reservar ahora</a>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ─── HERO ─────────────────────────────────────────────────── -->
+  <section class="hero" id="inicio">
+    <div class="hero__noise"></div>
+
+    <!-- Bento grid hero -->
+    <div class="bento bento--hero">
+
+      <!-- Card 1: Main heading -->
+      <div class="bento-card bento-card--hero reveal" data-delay="0">
+        <div class="bento-card__tag">EST. 1987 — COLECCIÓN PREMIUM</div>
+        <h1 class="hero__title">
+          Find Your<br />
+          <em>Perfect</em><br />
+          Stay.
+        </h1>
+        <p class="hero__sub">Más de 40 hoteles en destinos únicos.<br />Desde suites de lujo hasta escapadas boutique.</p>
+        <div class="hero__stats">
+          <div class="stat">
+            <span class="stat__num" data-count="40">0</span><span class="stat__plus">+</span>
+            <span class="stat__label">Hoteles</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num" data-count="1200">0</span><span class="stat__plus">+</span>
+            <span class="stat__label">Habitaciones</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num" data-count="98">0</span><span class="stat__plus">%</span>
+            <span class="stat__label">Satisfacción</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Hero image -->
+      <div class="bento-card bento-card--img reveal" data-delay="100">
+        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80" alt="Hotel de lujo" class="bento-card__img" />
+        <div class="bento-card__img-overlay">
+          <span class="pill">⭑ 5 Estrellas</span>
+          <span class="pill">Santorini, Grecia</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Quick booking -->
+      <div class="bento-card bento-card--booking reveal" data-delay="200" id="reservas">
+        <div class="booking-header">
+          <span class="booking-icon">◈</span>
+          <span class="booking-title">Reserva Express</span>
+        </div>
+        <form class="booking-form" id="bookingForm">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Destino / Hotel</label>
+              <select>
+                <option>Cualquier destino</option>
+                <option>Madrid, España</option>
+                <option>París, Francia</option>
+                <option>Santorini, Grecia</option>
+                <option>Dubái, EAU</option>
+                <option>Tokio, Japón</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Categoría</label>
+              <select>
+                <option>Todas</option>
+                <option>⭑⭑⭑ 3 Estrellas</option>
+                <option>⭑⭑⭑⭑ 4 Estrellas</option>
+                <option>⭑⭑⭑⭑⭑ 5 Estrellas</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Check-in</label>
+              <input type="date" />
+            </div>
+            <div class="form-field">
+              <label>Check-out</label>
+              <input type="date" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Habitación</label>
+              <select>
+                <option>Individual</option>
+                <option>Doble</option>
+                <option>Suite</option>
+                <option>Suite Presidencial</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Huéspedes</label>
+              <select>
+                <option>1 Adulto</option>
+                <option>2 Adultos</option>
+                <option>2 Adultos + 1 Niño</option>
+                <option>2 Adultos + 2 Niños</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-book">
+            <span>Buscar disponibilidad</span>
+            <span class="btn-book__arrow">→</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Card 4: Ambient image -->
+      <div class="bento-card bento-card--ambient reveal" data-delay="150">
+        <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&q=80" alt="Lobby hotel" class="bento-card__img" />
+        <div class="bento-card__ambient-text">
+          <span>Bienvenido</span>
+        </div>
+      </div>
+
+      <!-- Card 5: Feature pill -->
+      <div class="bento-card bento-card--pill reveal" data-delay="250">
+        <div class="pill-icon">◎</div>
+        <p>Reservas<br/>24/7</p>
+      </div>
+
+      <!-- Card 6: Feature pill -->
+      <div class="bento-card bento-card--pill bento-card--pill-alt reveal" data-delay="300">
+        <div class="pill-icon">◈</div>
+        <p>Check-in<br/>Exprés</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── FEATURES ─────────────────────────────────────────────── -->
+  <section class="section" id="servicios">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">// SERVICIOS</span>
+        <h2 class="section-title">Por qué elegir<br/><em>Luxoria</em></h2>
+      </div>
+
+      <div class="bento bento--features">
+
+        <div class="bento-card bento-card--feature reveal" data-delay="0">
+          <div class="feature-icon">◈</div>
+          <h3>Gestión de Reservas</h3>
+          <p>Sistema integral para particulares y agencias de viaje. Reservas flexibles con datos completos del huésped y opciones de modificación.</p>
+          <div class="feature-tag">RESERVACIONES</div>
+        </div>
+
+        <div class="bento-card bento-card--feature bento-card--feature-dark reveal" data-delay="100">
+          <div class="feature-icon">◎</div>
+          <h3>Tarifas Inteligentes</h3>
+          <p>Precios dinámicos según temporada alta, baja y media. IVA categorizado automáticamente según clasificación hotelera.</p>
+          <div class="feature-tag">TARIFAS</div>
+        </div>
+
+        <div class="bento-card bento-card--feature-wide reveal" data-delay="200">
+          <div class="feature-wide__content">
+            <div class="feature-icon">⬡</div>
+            <h3>Historial Completo de Huéspedes</h3>
+            <p>Registro detallado de estancias, gastos y facturas. Cada cliente tiene su perfil único con todas sus visitas a la cadena.</p>
+          </div>
+          <div class="feature-wide__img">
+            <div class="mini-dashboard">
+              <div class="dash-row"><span class="dash-dot dash-dot--green"></span> Juan García — Suite 501</div>
+              <div class="dash-row"><span class="dash-dot dash-dot--gold"></span> Ana Martínez — Doble 302</div>
+              <div class="dash-row"><span class="dash-dot dash-dot--blue"></span> Agencia TourPlus — 12 hab.</div>
+              <div class="dash-row"><span class="dash-dot dash-dot--green"></span> Carlos Ruiz — Individual 108</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--feature bento-card--feature-gold reveal" data-delay="50">
+          <div class="feature-icon">◇</div>
+          <h3>Categorías Premium</h3>
+          <p>Clasificación de 1 a 5 estrellas con movilidad entre categorías. Cada nivel tiene su propio régimen fiscal.</p>
+          <div class="feature-tag">CATEGORÍAS</div>
+        </div>
+
+        <div class="bento-card bento-card--feature reveal" data-delay="150">
+          <div class="feature-icon">▣</div>
+          <h3>Habitaciones por Planta</h3>
+          <p>Numeración inteligente que identifica ubicación. Suites, dobles, individuales con tarifas específicas por hotel y temporada.</p>
+          <div class="feature-tag">HABITACIONES</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOTELES DESTACADOS ────────────────────────────────────── -->
+  <section class="section section--dark" id="hoteles">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">// COLECCIÓN</span>
+        <h2 class="section-title">Hoteles<br/><em>Destacados</em></h2>
+        <a href="#reservas" class="section-link">Ver todos →</a>
+      </div>
+
+      <div class="bento bento--hotels">
+
+        <div class="bento-card bento-card--hotel bento-card--hotel-large reveal" data-delay="0">
+          <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=80" alt="Hotel Madrid" class="hotel-img" />
+          <div class="hotel-overlay">
+            <div class="hotel-info">
+              <div class="hotel-stars">⭑⭑⭑⭑⭑</div>
+              <h3 class="hotel-name">Grand Luxoria Madrid</h3>
+              <p class="hotel-loc">◎ Madrid, España</p>
+              <div class="hotel-meta">
+                <span>Desde <strong>€ 280</strong>/noche</span>
+                <span class="hotel-tag">Suite disponible</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--hotel reveal" data-delay="100">
+          <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Hotel París" class="hotel-img" />
+          <div class="hotel-overlay">
+            <div class="hotel-info">
+              <div class="hotel-stars">⭑⭑⭑⭑⭑</div>
+              <h3 class="hotel-name">Luxoria Paris</h3>
+              <p class="hotel-loc">◎ París, Francia</p>
+              <div class="hotel-meta">
+                <span>Desde <strong>€ 340</strong>/noche</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--hotel reveal" data-delay="200">
+          <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80" alt="Hotel Santorini" class="hotel-img" />
+          <div class="hotel-overlay">
+            <div class="hotel-info">
+              <div class="hotel-stars">⭑⭑⭑⭑</div>
+              <h3 class="hotel-name">Aegean Luxoria</h3>
+              <p class="hotel-loc">◎ Santorini, Grecia</p>
+              <div class="hotel-meta">
+                <span>Desde <strong>€ 210</strong>/noche</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--hotel reveal" data-delay="150">
+          <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80" alt="Hotel Dubái" class="hotel-img" />
+          <div class="hotel-overlay">
+            <div class="hotel-info">
+              <div class="hotel-stars">⭑⭑⭑⭑⭑</div>
+              <h3 class="hotel-name">Desert Pearl Luxoria</h3>
+              <p class="hotel-loc">◎ Dubái, EAU</p>
+              <div class="hotel-meta">
+                <span>Desde <strong>€ 450</strong>/noche</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats card -->
+        <div class="bento-card bento-card--stat reveal" data-delay="250">
+          <div class="stat-big">
+            <span class="stat-big__num" data-count="12">0</span>
+            <span class="stat-big__label">Países</span>
+          </div>
+          <div class="stat-big">
+            <span class="stat-big__num" data-count="40">0</span>
+            <span class="stat-big__label">Hoteles</span>
+          </div>
+          <p class="stat-note">Presencia internacional en los destinos más exclusivos del mundo.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CATEGORÍAS ───────────────────────────────────────────── -->
+  <section class="section" id="categorias">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag">// HABITACIONES</span>
+        <h2 class="section-title">Clases de<br/><em>Habitación</em></h2>
+      </div>
+
+      <div class="bento bento--rooms">
+
+        <div class="bento-card bento-card--room reveal" data-delay="0">
+          <div class="room-number">01</div>
+          <h3 class="room-type">Individual</h3>
+          <p class="room-desc">Confort y privacidad para el viajero independiente. Identificada por el primer dígito de planta.</p>
+          <div class="room-price">Desde <strong>€ 80</strong>/noche</div>
+          <div class="room-features">
+            <span>Wi-Fi</span><span>TV</span><span>AC</span>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--room bento-card--room-accent reveal" data-delay="100">
+          <div class="room-number">02</div>
+          <h3 class="room-type">Doble</h3>
+          <p class="room-desc">Ideal para parejas o amigos. Dos camas o cama king size con vistas seleccionables.</p>
+          <div class="room-price">Desde <strong>€ 140</strong>/noche</div>
+          <div class="room-features">
+            <span>Wi-Fi</span><span>TV</span><span>AC</span><span>Vista</span>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--room-img reveal" data-delay="150">
+          <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=700&q=80" alt="Habitación suite" class="room-img" />
+          <div class="room-img-label">Temporada alta disponible</div>
+        </div>
+
+        <div class="bento-card bento-card--room bento-card--room-dark reveal" data-delay="200">
+          <div class="room-number">03</div>
+          <h3 class="room-type">Suite</h3>
+          <p class="room-desc">Espacio amplio con sala de estar separada. Amenities premium incluidos.</p>
+          <div class="room-price">Desde <strong>€ 280</strong>/noche</div>
+          <div class="room-features">
+            <span>Wi-Fi</span><span>Jacuzzi</span><span>Minibar</span><span>Butler</span>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--room bento-card--room-gold reveal" data-delay="300">
+          <div class="room-number">04</div>
+          <h3 class="room-type">Suite Presidencial</h3>
+          <p class="room-desc">La cumbre del lujo. Múltiples habitaciones, mayordomía 24h y acceso exclusivo.</p>
+          <div class="room-price">Desde <strong>€ 850</strong>/noche</div>
+          <div class="room-features">
+            <span>Todo incluido</span><span>Piso exclusivo</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tarifas por temporada -->
+      <div class="season-grid reveal" data-delay="100">
+        <div class="season-card">
+          <div class="season-icon">☀</div>
+          <div class="season-name">Temporada Alta</div>
+          <div class="season-mult">×1.8</div>
+        </div>
+        <div class="season-card season-card--active">
+          <div class="season-icon">⟳</div>
+          <div class="season-name">Temporada Media</div>
+          <div class="season-mult">×1.0</div>
+        </div>
+        <div class="season-card">
+          <div class="season-icon">❄</div>
+          <div class="season-name">Temporada Baja</div>
+          <div class="season-mult">×0.7</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── AGENCIAS ─────────────────────────────────────────────── -->
+  <section class="section section--accent">
+    <div class="container">
+      <div class="bento bento--agency">
+
+        <div class="bento-card bento-card--agency-text reveal" data-delay="0">
+          <span class="section-tag">// AGENCIAS DE VIAJE</span>
+          <h2 class="section-title" style="margin-top:1rem;">Programa<br/><em>Corporativo</em></h2>
+          <p>Las agencias de viaje cuentan con acceso a nuestro sistema de reservas con tarifas especiales, gestión grupal y facturación centralizada. Registra tu agencia y comienza a ofrecer lo mejor a tus clientes.</p>
+          <a href="#contacto" class="btn-outline">Solicitar acceso →</a>
+        </div>
+
+        <div class="bento-card bento-card--agency-features reveal" data-delay="100">
+          <div class="agency-feature">
+            <span class="af-icon">◈</span>
+            <div>
+              <strong>Reservas en nombre de terceros</strong>
+              <p>Indica el nombre del huésped final directamente en la reserva.</p>
+            </div>
+          </div>
+          <div class="agency-feature">
+            <span class="af-icon">◎</span>
+            <div>
+              <strong>Gestión multi-reserva</strong>
+              <p>Administra grupos y viajes corporativos desde un único panel.</p>
+            </div>
+          </div>
+          <div class="agency-feature">
+            <span class="af-icon">◇</span>
+            <div>
+              <strong>Facturación centralizada</strong>
+              <p>Una sola factura para múltiples reservas con IVA detallado por categoría.</p>
+            </div>
+          </div>
+          <div class="agency-feature">
+            <span class="af-icon">▣</span>
+            <div>
+              <strong>Comisiones automáticas</strong>
+              <p>Liquidación mensual transparente según volumen gestionado.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card bento-card--agency-img reveal" data-delay="200">
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80" alt="Agencia" class="bento-card__img" />
+          <div class="agency-badge">
+            <span class="ab-num" data-count="500">0</span>+<br/>
+            <span class="ab-label">Agencias Socias</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TICKER ────────────────────────────────────────────────── -->
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <span>MADRID</span><span>◈</span>
+      <span>PARIS</span><span>◈</span>
+      <span>SANTORINI</span><span>◈</span>
+      <span>DUBAI</span><span>◈</span>
+      <span>TOKYO</span><span>◈</span>
+      <span>NEW YORK</span><span>◈</span>
+      <span>ROME</span><span>◈</span>
+      <span>BARCELONA</span><span>◈</span>
+      <span>BALI</span><span>◈</span>
+      <span>MALDIVES</span><span>◈</span>
+      <!-- duplicate for seamless loop -->
+      <span>MADRID</span><span>◈</span>
+      <span>PARIS</span><span>◈</span>
+      <span>SANTORINI</span><span>◈</span>
+      <span>DUBAI</span><span>◈</span>
+      <span>TOKYO</span><span>◈</span>
+      <span>NEW YORK</span><span>◈</span>
+      <span>ROME</span><span>◈</span>
+      <span>BARCELONA</span><span>◈</span>
+      <span>BALI</span><span>◈</span>
+      <span>MALDIVES</span><span>◈</span>
+    </div>
+  </div>
+
+  <!-- ─── CTA ───────────────────────────────────────────────────── -->
+  <section class="cta-section">
+    <div class="cta-noise"></div>
+    <div class="container">
+      <div class="cta-inner reveal">
+        <span class="section-tag" style="color:var(--gold)">// COMIENZA HOY</span>
+        <h2 class="cta-title">Tu próxima<br/><em>aventura</em><br/>te espera.</h2>
+        <p class="cta-sub">Más de 1,200 habitaciones disponibles en 40 hoteles de lujo alrededor del mundo.</p>
+        <div class="cta-actions">
+          <a href="#reservas" class="btn-primary">Reservar ahora →</a>
+          <a href="#hoteles" class="btn-ghost">Explorar hoteles</a>
+        </div>
+      </div>
+      <div class="cta-img-wrap reveal" data-delay="100">
+        <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=700&q=80" alt="Hotel de lujo" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ────────────────────────────────────────────────── -->
+  <footer class="footer" id="contacto">
+    <div class="container">
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+          <div class="nav__logo">
+            <span class="nav__logo-icon">◈</span>
+            <span class="nav__logo-text">LUXORIA</span>
+          </div>
+          <p>Cadena Hotelera Internacional. Excelencia en cada estancia desde 1987.</p>
+          <div class="footer-socials">
+            <a href="#">◈</a>
+            <a href="#">◎</a>
+            <a href="#">◇</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Hoteles</h4>
+          <a href="#">Buscar hoteles</a>
+          <a href="#">Ofertas especiales</a>
+          <a href="#">Temporada alta</a>
+          <a href="#">Destinos nuevos</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Reservas</h4>
+          <a href="#">Hacer reserva</a>
+          <a href="#">Modificar reserva</a>
+          <a href="#">Cancelaciones</a>
+          <a href="#">Agencias de viaje</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <a href="#">Sobre nosotros</a>
+          <a href="#">Categorías</a>
+          <a href="#">Programa fidelidad</a>
+          <a href="#">Trabaja con nosotros</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contacto</h4>
+          <a href="#">◎ +34 900 123 456</a>
+          <a href="#">✉ info@luxoria.com</a>
+          <a href="#">▣ 24/7 soporte</a>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 LUXORIA Cadena Hotelera. Todos los derechos reservados.</span>
+        <div class="footer-legal">
+          <a href="#">Privacidad</a>
+          <a href="#">Términos</a>
+          <a href="#">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Facturación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body class="admin-body">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebarToggle">☰</button>
+      <div class="topbar-breadcrumb"><span class="tb-muted">Admin</span><span class="tb-sep">›</span><span>Facturación</span></div>
+      <div class="topbar-actions"><span class="topbar-date" id="topbarDate"></span></div>
+    </header>
+    <div class="admin-content">
+      <div class="kpi-grid">
+        <div class="kpi-card reveal"><div class="kpi-icon" style="color:var(--gold)">▩</div><div class="kpi-body"><span class="kpi-label">Total facturas</span><span class="kpi-value" id="kpiTotal">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="60"><div class="kpi-icon" style="color:var(--green)">◎</div><div class="kpi-body"><span class="kpi-label">Pagadas</span><span class="kpi-value" id="kpiPagadas">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="120"><div class="kpi-icon" style="color:var(--gold)">◈</div><div class="kpi-body"><span class="kpi-label">Pendientes</span><span class="kpi-value" id="kpiPend">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="180"><div class="kpi-icon" style="color:var(--blue)">◇</div><div class="kpi-body"><span class="kpi-label">Total facturado</span><span class="kpi-value" id="kpiMonto">—</span></div></div>
+      </div>
+      <div class="content-grid">
+        <!-- Listado de facturas -->
+        <div class="panel panel--wide reveal">
+          <div class="panel__header">
+            <div class="panel__title"><span class="panel-icon">▩</span>Facturas emitidas</div>
+            <div class="panel__tools">
+              <select class="admin-select" id="filterEstado"><option value="">Todos los estados</option><option value="Pendiente">Pendiente</option><option value="Pagada">Pagada</option><option value="Anulada">Anulada</option></select>
+              <button class="btn-admin btn-admin--primary" id="btnGenerar">+ Generar factura</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table"><thead><tr><th>N.º Factura</th><th>Cliente</th><th>Estancia</th><th>Fecha</th><th>Subtotal</th><th>IVA</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="facturaBody"></tbody></table>
+          </div>
+          <div class="table-footer"><span class="table-count" id="tableCount">—</span></div>
+        </div>
+        <!-- Vista previa factura -->
+        <div class="panel reveal" data-delay="80">
+          <div class="panel__header"><div class="panel__title"><span class="panel-icon">◎</span>Vista previa</div></div>
+          <div class="detail-placeholder" id="detailPh"><div class="detail-ph-icon">▩</div><p>Selecciona una factura<br/>para ver la vista previa</p></div>
+          <div id="invoicePreview" style="display:none;padding:1.5rem"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal generar factura -->
+  <div class="modal-backdrop" id="generarBackdrop">
+    <div class="modal">
+      <div class="modal__header"><div class="modal__title">Generar Factura</div><button class="modal__close" id="genClose">✕</button></div>
+      <div class="modal__body">
+        <form class="admin-form" id="genForm" novalidate>
+          <div class="admin-field"><label>Estancia (finalizada) <span class="req">*</span></label><select id="gEstancia" required><option value="">Seleccionar…</option></select><span class="field-err" id="errGEstancia"></span></div>
+          <div id="genPreview" style="display:none;margin-top:1rem">
+            <div class="section-divider"><span>Resumen de factura</span></div>
+            <div id="genPreviewContent"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="genCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--primary" id="genConfirm">Emitir factura</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print overlay -->
+  <div id="printArea" style="display:none"></div>
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="js/sidebar.js"></script><script src="js/admin.js"></script><script src="js/data.js"></script>
+  <script>
+  /* ── LUXORIA — facturacion.js (inline) ──────────────────────── */
+  'use strict';
+  const KEY_F='luxoria_facturas';
+  const SEED_F=[
+    {id:1,num:'LUX-2025-001',estanciaId:1,clienteId:1,fecha:'2025-06-15',subtotal:800,ivaAmt:80,total:880,estado:'Pagada',gastos:[{tipo:'Restaurante',desc:'Cena El Jardín',monto:180},{tipo:'Spa',desc:'Masaje premium',monto:95},{tipo:'Minibar',desc:'Consumo minibar',monto:45}],habitacionSubtotal:480,ivaRate:10},
+    {id:2,num:'LUX-2025-002',estanciaId:2,clienteId:2,fecha:'2025-07-08',subtotal:595,ivaAmt:59.5,total:654.5,estado:'Pagada',gastos:[{tipo:'Room Service',desc:'Desayuno x7',monto:65},{tipo:'Lavandería',desc:'Lavandería express',monto:30}],habitacionSubtotal:500,ivaRate:10},
+    {id:3,num:'LUX-2025-003',estanciaId:4,clienteId:1,fecha:'2025-09-05',subtotal:2280,ivaAmt:478.8,total:2758.8,estado:'Pendiente',gastos:[{tipo:'Restaurante',desc:'Cena de gala',monto:450},{tipo:'Spa',desc:'Spa VIP',monto:280},{tipo:'Otros',desc:'Flores decoración',monto:150}],habitacionSubtotal:1400,ivaRate:21},
+  ];
+
+  let facturas=[],filtEst='',selectedId=null;
+  function load(){try{facturas=JSON.parse(localStorage.getItem(KEY_F))||JSON.parse(JSON.stringify(SEED_F));}catch{facturas=JSON.parse(JSON.stringify(SEED_F));}}
+  function save(){try{localStorage.setItem(KEY_F,JSON.stringify(facturas));}catch{}}
+  function nextId(){return facturas.length?Math.max(...facturas.map(f=>f.id))+1:1;}
+  function fmt(n){return'€'+parseFloat(n||0).toFixed(2);}
+  function fmtDate(d){if(!d)return'—';const [y,m,dd]=d.split('-');const mn=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return`${parseInt(dd)} ${mn[parseInt(m)-1]} ${y}`;}
+  function nextNum(){const y=new Date().getFullYear();const n=facturas.filter(f=>f.num.includes(y)).length+1;return`LUX-${y}-${String(n+3).padStart(3,'0')}`;}
+
+  function estadoBadge(e){
+    const cfg={Pagada:{c:'var(--green)',bg:'rgba(92,186,140,.12)',b:'rgba(92,186,140,.3)'},Pendiente:{c:'var(--gold)',bg:'rgba(201,168,76,.12)',b:'rgba(201,168,76,.3)'},Anulada:{c:'#e05c5c',bg:'rgba(224,92,92,.12)',b:'rgba(224,92,92,.3)'}};
+    const s=cfg[e]||cfg.Pendiente;return`<span style="display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:999px;font-size:.62rem;background:${s.bg};border:1px solid ${s.b};color:${s.c}">◉ ${e}</span>`;
+  }
+
+  function renderTable(){
+    let list=[...facturas];if(filtEst)list=list.filter(f=>f.estado===filtEst);
+    document.getElementById('tableCount').textContent=`${list.length} factura${list.length!==1?'s':''}`;
+    document.getElementById('facturaBody').innerHTML=list.map(f=>{
+      const c=LuxData.clienteById(f.clienteId);
+      return`<tr data-id="${f.id}" class="${selectedId===f.id?'row--selected':''}">
+        <td style="color:var(--gold);font-weight:700">${f.num}</td>
+        <td class="td-name">${c?.nombre||'—'}</td>
+        <td class="td-muted">#${f.estanciaId}</td>
+        <td class="td-muted">${fmtDate(f.fecha)}</td>
+        <td class="td-muted">${fmt(f.subtotal)}</td>
+        <td class="td-muted">${f.ivaRate}%</td>
+        <td style="color:var(--white);font-weight:700">${fmt(f.total)}</td>
+        <td>${estadoBadge(f.estado)}</td>
+        <td><div class="td-actions">
+          <button class="btn-admin btn-admin--icon" data-action="view" data-id="${f.id}" title="Ver">◎</button>
+          <button class="btn-admin btn-admin--icon" data-action="print" data-id="${f.id}" title="Imprimir">▣</button>
+          ${f.estado==='Pendiente'?`<button class="btn-admin btn-admin--icon" style="color:var(--green);border-color:rgba(92,186,140,.3)" data-action="pagar" data-id="${f.id}" title="Marcar pagada">✓</button>`:''}
+        </div></td>
+      </tr>`;
+    }).join('');
+    document.querySelectorAll('#facturaBody tr').forEach(tr=>{tr.addEventListener('click',ev=>{if(ev.target.closest('[data-action]'))return;selectFactura(parseInt(tr.dataset.id));});});
+    document.querySelectorAll('#facturaBody [data-action]').forEach(b=>b.addEventListener('click',ev=>{
+      ev.stopPropagation();const id=parseInt(b.dataset.id);
+      if(b.dataset.action==='view')  selectFactura(id);
+      if(b.dataset.action==='print') printFactura(id);
+      if(b.dataset.action==='pagar') marcarPagada(id);
+    }));
+    renderKpis();
+  }
+
+  function renderKpis(){
+    document.getElementById('kpiTotal').textContent=facturas.length;
+    document.getElementById('kpiPagadas').textContent=facturas.filter(f=>f.estado==='Pagada').length;
+    document.getElementById('kpiPend').textContent=facturas.filter(f=>f.estado==='Pendiente').length;
+    const total=facturas.filter(f=>f.estado!=='Anulada').reduce((s,f)=>s+f.total,0);
+    document.getElementById('kpiMonto').textContent=total?fmt(total):'—';
+  }
+
+  function marcarPagada(id){const i=facturas.findIndex(f=>f.id===id);if(i!==-1){facturas[i].estado='Pagada';save();renderTable();if(selectedId===id)selectFactura(id);AdminUtils.showToast('Factura marcada como pagada.','success');}}
+
+  function buildInvoiceHTML(f,forPrint=false){
+    const c=LuxData.clienteById(f.clienteId),e=LuxData.estanciaById(f.estanciaId),h=LuxData.hotelById(e?.hotelId);
+    const style=forPrint?`font-family:'Space Mono',monospace;background:#fff;color:#111;padding:40px;max-width:700px;`:``;
+    const textColor=forPrint?'#111':'var(--white)';const mutedColor=forPrint?'#666':'var(--muted)';
+    const borderColor=forPrint?'#ddd':'var(--card-border)';const goldColor=forPrint?'#8b6914':'var(--gold)';
+    return`<div style="${style}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid ${borderColor}">
+        <div><div style="font-size:1.4rem;font-weight:700;letter-spacing:.1em;color:${goldColor}">◈ LUXORIA</div><div style="font-size:.65rem;color:${mutedColor};margin-top:.3rem">Cadena Hotelera Internacional</div></div>
+        <div style="text-align:right"><div style="font-size:1.1rem;font-weight:700;color:${textColor}">${f.num}</div><div style="font-size:.65rem;color:${mutedColor}">Fecha: ${fmtDate(f.fecha)}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+        <div><div style="font-size:.6rem;color:${mutedColor};text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">Facturar a</div>
+          <div style="font-size:.8rem;color:${textColor};font-weight:700">${c?.nombre||'—'}</div>
+          <div style="font-size:.7rem;color:${mutedColor}">${c?.email||'—'}</div>
+          <div style="font-size:.7rem;color:${mutedColor}">${c?.tipoId}: ${c?.idNum||'—'}</div>
+        </div>
+        <div><div style="font-size:.6rem;color:${mutedColor};text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">Hotel</div>
+          <div style="font-size:.8rem;color:${textColor};font-weight:700">${h?.nombre||'—'}</div>
+          <div style="font-size:.7rem;color:${mutedColor}">Hab: ${e?.habitacion||'—'}</div>
+          <div style="font-size:.7rem;color:${mutedColor}">${e?fmtDate(e.entrada)+' → '+fmtDate(e.salida):''}</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:.72rem">
+        <thead><tr style="border-bottom:1px solid ${borderColor}">
+          <th style="text-align:left;padding:.5rem .3rem;color:${mutedColor};font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Concepto</th>
+          <th style="text-align:right;padding:.5rem .3rem;color:${mutedColor};font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">Importe</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:.5rem .3rem;color:${textColor}">Alojamiento (${e?Math.max(0,Math.round((new Date(e.salida)-new Date(e.entrada))/86400000)):0} noches)</td><td style="padding:.5rem .3rem;text-align:right;color:${textColor}">${fmt(f.habitacionSubtotal)}</td></tr>
+          ${(f.gastos||[]).map(g=>`<tr><td style="padding:.4rem .3rem;color:${mutedColor}">  ${g.tipo}: ${g.desc}</td><td style="padding:.4rem .3rem;text-align:right;color:${mutedColor}">${fmt(g.monto)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="border-top:1px solid ${borderColor};padding-top:.8rem">
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:${mutedColor};margin-bottom:.3rem"><span>Subtotal</span><span>${fmt(f.subtotal)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.72rem;color:${mutedColor};margin-bottom:.5rem"><span>IVA (${f.ivaRate}%)</span><span>${fmt(f.ivaAmt)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.9rem;font-weight:700;color:${goldColor};border-top:1px solid ${borderColor};padding-top:.5rem"><span>TOTAL</span><span>${fmt(f.total)}</span></div>
+      </div>
+      <div style="margin-top:1.5rem;font-size:.6rem;color:${mutedColor};text-align:center">LUXORIA Cadena Hotelera Internacional · CIF: B-12345678 · info@luxoria.com</div>
+    </div>`;
+  }
+
+  function selectFactura(id){
+    selectedId=id;renderTable();
+    const f=facturas.find(x=>x.id===id);
+    const ph=document.getElementById('detailPh'),ip=document.getElementById('invoicePreview');
+    if(!f){ph.style.display='';ip.style.display='none';return;}
+    ph.style.display='none';ip.style.display='block';
+    ip.innerHTML=buildInvoiceHTML(f)+`<div style="display:flex;gap:.6rem;margin-top:1rem">
+      <button class="btn-admin btn-admin--primary" onclick="printFactura(${id})">▣ Imprimir</button>
+      ${f.estado==='Pendiente'?`<button class="btn-admin btn-admin--ghost" style="border-color:rgba(92,186,140,.4);color:var(--green)" onclick="marcarPagada(${id})">✓ Marcar pagada</button>`:''}
+    </div>`;
+  }
+
+  function printFactura(id){
+    const f=facturas.find(x=>x.id===id);if(!f)return;
+    const w=window.open('','_blank');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${f.num}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>body{margin:0;background:#fff}@media print{body{margin:0}}</style></head>
+    <body>${buildInvoiceHTML(f,true)}<script>window.onload=function(){window.print();}<\/script></body></html>`);
+    w.document.close();
+  }
+
+  /* Generar nueva factura */
+  function populateEstanciasGen(){
+    const estancias=LuxData.getEstancias().filter(e=>e.estado==='Finalizada');
+    const yaFacturadas=new Set(facturas.map(f=>f.estanciaId));
+    const clientes=LuxData.getClientes();
+    document.getElementById('gEstancia').innerHTML=`<option value="">Seleccionar…</option>`+
+      estancias.filter(e=>!yaFacturadas.has(e.id)).map(e=>{const c=clientes.find(cl=>cl.id===e.clienteId);return`<option value="${e.id}">#${e.id} ${c?.nombre||'—'} — ${e.habitacion}</option>`;}).join('');
+  }
+
+  document.getElementById('gEstancia')?.addEventListener('change',function(){
+    const eId=parseInt(this.value);const gp=document.getElementById('genPreview'),gpc=document.getElementById('genPreviewContent');
+    if(!eId){gp.style.display='none';return;}
+    const e=LuxData.getEstancias().find(x=>x.id===eId);
+    const c=LuxData.clienteById(e?.clienteId),h=LuxData.hotelById(e?.hotelId);
+    const gastos=LuxData.getGastos().filter(g=>g.estanciaId===eId);
+    const n=Math.max(0,Math.round((new Date(e.salida)-new Date(e.entrada))/86400000));
+    const tarifas=LuxData.getTarifas();
+    const tarifa=tarifas.find(t=>t.hotelId===e.hotelId&&t.tipoId===e.tipoHabId);
+    const precioNoche=tarifa?tarifa.precio:0;
+    const habSubtotal=precioNoche*n;
+    const gastosTotal=gastos.reduce((s,g)=>s+g.monto,0);
+    const subtotal=habSubtotal+gastosTotal;
+    const cat=LuxData.catByEstrellas(h?.categoria||3);
+    const ivaRate=cat?cat.porcentajeIva:10;
+    const ivaAmt=subtotal*ivaRate/100;
+    const total=subtotal+ivaAmt;
+    gp.style.display='block';
+    gpc.innerHTML=`<div style="background:var(--bg-3);border:1px solid var(--card-border);border-radius:var(--radius-sm);padding:1rem;font-size:.72rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:var(--muted)">Cliente</span><span>${c?.nombre||'—'}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:var(--muted)">Hotel</span><span>${h?.nombre||'—'}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:var(--muted)">Alojamiento (${n} noches × €${precioNoche})</span><span>€${habSubtotal.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:var(--muted)">Gastos adicionales</span><span>€${gastosTotal.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="color:var(--muted)">IVA (${ivaRate}%)</span><span>€${ivaAmt.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;color:var(--gold);border-top:1px solid var(--card-border);padding-top:.4rem;margin-top:.4rem"><span>TOTAL</span><span>€${total.toFixed(2)}</span></div>
+    </div>`;
+    gpc._data={e,c,h,habSubtotal,gastosTotal,subtotal,ivaRate,ivaAmt,total,gastos,n};
+  });
+
+  document.getElementById('genConfirm')?.addEventListener('click',function(){
+    const eId=parseInt(document.getElementById('gEstancia').value);
+    if(!eId){const el=document.getElementById('errGEstancia');if(el)el.textContent='Selecciona una estancia.';return;}
+    const gpc=document.getElementById('genPreviewContent');if(!gpc._data)return;
+    const {e,habSubtotal,gastosTotal,subtotal,ivaRate,ivaAmt,total,gastos}=gpc._data;
+    const nueva={id:nextId(),num:nextNum(),estanciaId:e.id,clienteId:e.clienteId,fecha:new Date().toISOString().slice(0,10),subtotal,ivaRate,ivaAmt,total,estado:'Pendiente',gastos:gastos.map(g=>({tipo:g.tipo,desc:g.descripcion,monto:g.monto})),habitacionSubtotal:habSubtotal};
+    facturas.push(nueva);save();
+    AdminUtils.closeModal('generarBackdrop');
+    AdminUtils.showToast(`Factura ${nueva.num} generada.`,'success');
+    renderTable();selectFactura(nueva.id);
+  });
+
+  document.getElementById('filterEstado')?.addEventListener('change',e=>{filtEst=e.target.value;renderTable();});
+  document.getElementById('btnGenerar')?.addEventListener('click',()=>{populateEstanciasGen();document.getElementById('genPreview').style.display='none';document.getElementById('gEstancia').value='';AdminUtils.openModal('generarBackdrop');});
+  document.getElementById('genClose')?.addEventListener('click',()=>AdminUtils.closeModal('generarBackdrop'));
+  document.getElementById('genCancelar')?.addEventListener('click',()=>AdminUtils.closeModal('generarBackdrop'));
+
+  load();renderTable();
+  </script>
+</body>
+</html>

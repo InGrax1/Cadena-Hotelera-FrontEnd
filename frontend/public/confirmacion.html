@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Confirmación de Reserva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container" style="max-width:860px">
+      <div class="booking-steps" id="bookingSteps"></div>
+      <div class="page-header">
+        <div class="page-header__eyebrow">Paso 5 de 6 · Casi listo</div>
+        <h1 class="page-header__title">Confirma tu Reserva</h1>
+        <p class="page-header__sub">Revisa toda la información antes de proceder al pago.</p>
+      </div>
+
+      <!-- Full summary card -->
+      <div class="confirmation-card" style="margin-bottom:1.5rem">
+        <div class="cc-header">
+          <div style="font-size:.6rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem">Resumen completo</div>
+          <div id="cfHotelName" style="font-family:var(--font-serif);font-size:1.3rem;color:var(--white)"></div>
+          <div id="cfStars" style="color:var(--star-color);font-size:.8rem;margin-top:.2rem"></div>
+        </div>
+        <div class="cc-body">
+          <div class="cc-row"><span>Habitación</span><strong id="cfRoom"></strong></div>
+          <div class="cc-row"><span>Check-in</span><strong id="cfEntrada"></strong></div>
+          <div class="cc-row"><span>Check-out</span><strong id="cfSalida"></strong></div>
+          <div class="cc-row"><span>Duración</span><strong id="cfNoches"></strong></div>
+          <div class="cc-row"><span>Huéspedes</span><strong id="cfHuespedes"></strong></div>
+          <div class="cc-row"><span>Nombre</span><strong id="cfNombre"></strong></div>
+          <div class="cc-row"><span>Email</span><strong id="cfEmail"></strong></div>
+          <div class="cc-row"><span>Teléfono</span><strong id="cfTelefono"></strong></div>
+          <div id="cfAgenciaRow" class="cc-row" style="display:none"><span>Agencia</span><strong id="cfAgencia"></strong></div>
+          <div id="cfHuespedRow" class="cc-row" style="display:none"><span>Huésped hospedado</span><strong id="cfHuespedName"></strong></div>
+          <div class="cc-row"><span>Subtotal alojamiento</span><strong id="cfSubtotal"></strong></div>
+          <div class="cc-row"><span id="cfIvaLabel">IVA</span><strong id="cfIva"></strong></div>
+          <div id="cfSeasonRow" class="cc-row" style="display:none"><span>Temporada</span><strong id="cfSeason"></strong></div>
+          <div class="cc-row cc-row--total"><span>TOTAL A PAGAR</span><strong id="cfTotal"></strong></div>
+        </div>
+      </div>
+
+      <!-- Policies -->
+      <div class="policies-box" style="margin-bottom:1.5rem">
+        <strong>Al confirmar aceptas:</strong> Los términos y condiciones de LUXORIA.
+        Cancelación gratuita hasta 48h antes del check-in. No reembolsable en temporada alta y festivos.
+        Se enviará un email de confirmación a tu dirección de correo electrónico.
+      </div>
+
+      <button class="btn-full" onclick="window.location.href='pago.html'">Ir al pago ›</button>
+      <a href="huesped.html" class="btn-secondary">← Editar datos del huésped</a>
+    </div>
+  </div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, renderStars, seasonBadge, fmtEur, buildClientNav, renderBookingSteps } = LuxClient;
+  buildClientNav();
+  renderBookingSteps(document.getElementById('bookingSteps'), 5);
+
+  const sess = BookingSession.get();
+  if (!sess.hotelId || !sess.nombre) window.location.href = 'huesped.html';
+
+  const hotel  = Data.hotelById(sess.hotelId);
+  const tipo   = Data.tipoById(sess.tipoId);
+  const noches = DateUtil.nights(sess.entrada, sess.salida);
+
+  document.getElementById('cfHotelName').textContent = hotel?.nombre || '—';
+  document.getElementById('cfStars').textContent     = renderStars(hotel?.categoria || 3);
+  document.getElementById('cfRoom').textContent      = tipo?.nombre || '—';
+  document.getElementById('cfEntrada').textContent   = DateUtil.fmt(sess.entrada);
+  document.getElementById('cfSalida').textContent    = DateUtil.fmt(sess.salida);
+  document.getElementById('cfNoches').textContent    = `${noches} noche${noches!==1?'s':''}`;
+  document.getElementById('cfHuespedes').textContent = `${sess.huespedes || 2} persona${(sess.huespedes||2)>1?'s':''}`;
+  document.getElementById('cfNombre').textContent    = `${sess.nombre} ${sess.apellido}`;
+  document.getElementById('cfEmail').textContent     = sess.email || '—';
+  document.getElementById('cfTelefono').textContent  = sess.telefono || '—';
+  document.getElementById('cfSubtotal').textContent  = fmtEur(sess.subtotal);
+  document.getElementById('cfIvaLabel').textContent  = `IVA (${sess.ivaRate}%)`;
+  document.getElementById('cfIva').textContent       = fmtEur(sess.ivaAmt);
+  document.getElementById('cfTotal').textContent     = fmtEur(sess.total);
+
+  if (sess.tipoReserva === 'Agencia') {
+    document.getElementById('cfAgenciaRow').style.display = '';
+    document.getElementById('cfHuespedRow').style.display = '';
+    document.getElementById('cfAgencia').textContent = sess.agencia || '—';
+    document.getElementById('cfHuespedName').textContent = sess.huesped || '—';
+  }
+  if (sess.temporadaNombre) {
+    document.getElementById('cfSeasonRow').style.display = '';
+    document.getElementById('cfSeason').textContent = `${sess.temporadaNombre} (${sess.temporadaTipo})`;
+  }
+  </script>
+</body>
+</html>

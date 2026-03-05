@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Mi Perfil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container">
+
+      <!-- Login/Register panel shown if not logged -->
+      <div id="loginPanel" style="display:none;max-width:440px;margin:4rem auto">
+        <div class="form-card" style="text-align:center">
+          <div style="font-size:2rem;color:var(--gold);margin-bottom:1rem">◙</div>
+          <h2 style="font-family:var(--font-serif);font-size:1.5rem;font-weight:300;color:var(--white);margin-bottom:.4rem">Accede a tu perfil</h2>
+          <p style="font-size:.72rem;color:var(--muted);margin-bottom:1.5rem">Consulta y gestiona tus reservas, facturas e historial de estancias.</p>
+          <div class="form-field" style="margin-bottom:.8rem;text-align:left">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="tu@email.com" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:.72rem 1rem;color:var(--white);font-family:var(--font-mono);font-size:.72rem;outline:none;width:100%"/>
+          </div>
+          <div class="form-field" style="margin-bottom:1.2rem;text-align:left">
+            <label>Nombre (para registro)</label>
+            <input type="text" id="loginNombre" placeholder="Tu nombre completo" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:.72rem 1rem;color:var(--white);font-family:var(--font-mono);font-size:.72rem;outline:none;width:100%"/>
+          </div>
+          <button class="btn-full" onclick="doLogin()">Acceder / Registrarse</button>
+        </div>
+      </div>
+
+      <!-- Profile content -->
+      <div id="profileContent" style="display:none">
+        <div class="profile-layout">
+          <!-- Sidebar -->
+          <div class="profile-sidebar">
+            <div class="profile-avatar-big" id="profileAvatar">U</div>
+            <div class="profile-name" id="profileName">—</div>
+            <div class="profile-email" id="profileEmail">—</div>
+            <ul class="profile-nav">
+              <li><a href="#" class="active" data-section="reservas" onclick="showSection('reservas');return false"><span>⬡</span> Mis Reservas</a></li>
+              <li><a href="#" data-section="facturas" onclick="showSection('facturas');return false"><span>▩</span> Facturas</a></li>
+              <li><a href="#" data-section="historial" onclick="showSection('historial');return false"><span>▦</span> Historial</a></li>
+            </ul>
+            <div class="profile-stat">
+              <div class="profile-stat-num" id="statReservas">0</div>
+              <div class="profile-stat-label">Reservas totales</div>
+            </div>
+            <button class="btn-secondary" style="margin-top:1rem" onclick="doLogout()">Cerrar sesión</button>
+          </div>
+
+          <!-- Main content -->
+          <div>
+            <!-- MIS RESERVAS -->
+            <div id="section-reservas">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.6rem">
+                <h2 class="section-title" style="margin:0">Mis Reservas</h2>
+                <a href="busqueda.html" class="cn-btn cn-btn--primary">+ Nueva reserva</a>
+              </div>
+              <div id="reservasList">
+                <div style="text-align:center;padding:3rem;color:var(--muted)">
+                  <div style="font-size:2rem;opacity:.3;margin-bottom:.8rem">⬡</div>
+                  <p>No tienes reservas aún.</p>
+                  <a href="busqueda.html" style="color:var(--gold);font-size:.72rem;text-decoration:none">Buscar hoteles →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- FACTURAS -->
+            <div id="section-facturas" style="display:none">
+              <h2 class="section-title">Facturas</h2>
+              <div id="facturasList"></div>
+            </div>
+
+            <!-- HISTORIAL -->
+            <div id="section-historial" style="display:none">
+              <h2 class="section-title">Historial de estancias</h2>
+              <div id="historialList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Modify dates -->
+  <div class="modal-backdrop" id="modifyModal" style="display:none;position:fixed;inset:0;background:rgba(8,8,16,.8);z-index:999;display:none;align-items:center;justify-content:center">
+    <div style="background:var(--bg-2);border:1px solid rgba(201,168,76,.2);border-radius:var(--radius);padding:2rem;width:100%;max-width:420px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+        <div style="font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)">Modificar fechas</div>
+        <button onclick="closeModify()" style="background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer">✕</button>
+      </div>
+      <div class="form-grid" style="margin-bottom:1.2rem">
+        <div class="form-field">
+          <label>Nueva entrada</label>
+          <input type="date" id="modEntrada" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:.72rem 1rem;color:var(--white);font-family:var(--font-mono);font-size:.72rem;outline:none;width:100%"/>
+        </div>
+        <div class="form-field">
+          <label>Nueva salida</label>
+          <input type="date" id="modSalida" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:.72rem 1rem;color:var(--white);font-family:var(--font-mono);font-size:.72rem;outline:none;width:100%"/>
+        </div>
+      </div>
+      <button class="btn-full" onclick="saveModify()">Guardar cambios</button>
+    </div>
+  </div>
+
+  <div id="clientToasts" class="toast-container"></div>
+  <script src="js/client.js"></script>
+  <script>
+  const { ClientUser, Data, DateUtil, renderStars, fmtEur, buildClientNav, showToast } = LuxClient;
+  buildClientNav('reservas');
+
+  let modifyingId = null;
+
+  function doLogin() {
+    const email  = document.getElementById('loginEmail').value.trim();
+    const nombre = document.getElementById('loginNombre').value.trim();
+    if (!email) { showToast('Por favor ingresa tu email.', 'error'); return; }
+    ClientUser.set({ nombre: nombre || email.split('@')[0], email });
+    buildClientNav('reservas');
+    initProfile();
+  }
+  window.doLogin = doLogin;
+
+  function doLogout() {
+    ClientUser.clear();
+    document.getElementById('profileContent').style.display = 'none';
+    document.getElementById('loginPanel').style.display = 'block';
+    buildClientNav('reservas');
+    showToast('Sesión cerrada.', 'info');
+  }
+  window.doLogout = doLogout;
+
+  function initProfile() {
+    const user = ClientUser.get();
+    if (!user) { document.getElementById('loginPanel').style.display = 'block'; document.getElementById('profileContent').style.display = 'none'; return; }
+    document.getElementById('loginPanel').style.display = 'none';
+    document.getElementById('profileContent').style.display = 'block';
+    document.getElementById('profileAvatar').textContent = user.nombre?.[0]?.toUpperCase() || 'U';
+    document.getElementById('profileName').textContent  = user.nombre || '—';
+    document.getElementById('profileEmail').textContent = user.email || '—';
+    loadReservas();
+    loadFacturas();
+    loadHistorial();
+  }
+
+  function showSection(s) {
+    ['reservas','facturas','historial'].forEach(x => { document.getElementById(`section-${x}`).style.display = x===s?'block':'none'; });
+    document.querySelectorAll('.profile-nav a').forEach(a => { a.classList[a.dataset.section===s?'add':'remove']('active'); });
+  }
+  window.showSection = showSection;
+
+  /* STATUS BADGES */
+  function statusBadge(e) {
+    const cfg = { Confirmada:{cls:'status-badge--green',i:'✓'}, Pendiente:{cls:'status-badge--gold',i:'◈'}, Cancelada:{cls:'status-badge--red',i:'✕'}, Finalizada:{cls:'status-badge--grey',i:'◎'} };
+    const s = cfg[e] || cfg.Pendiente;
+    return `<span class="status-badge ${s.cls}">${s.i} ${e}</span>`;
+  }
+
+  function loadReservas() {
+    const all = JSON.parse(localStorage.getItem('luxoria_reservas') || '[]');
+    const el  = document.getElementById('reservasList');
+    document.getElementById('statReservas').textContent = all.length;
+    if (!all.length) { el.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted)"><div style="font-size:2rem;opacity:.3;margin-bottom:.8rem">⬡</div><p>No tienes reservas aún.</p><a href="busqueda.html" style="color:var(--gold);font-size:.72rem;text-decoration:none">Buscar hoteles →</a></div>`; return; }
+    el.innerHTML = [...all].reverse().map(r => {
+      const hotel = Data.hotelById(r.hotelId), tipo = Data.tipoById(r.tipoHabId);
+      const noches = DateUtil.nights(r.entrada, r.salida);
+      return `
+        <div class="reservation-list-item">
+          <div>
+            <div class="rli-hotel">${hotel?.nombre || '—'}</div>
+            <div class="rli-details">
+              ${tipo?.nombre || '—'} · ${DateUtil.fmt(r.entrada)} → ${DateUtil.fmt(r.salida)} · ${noches} noche${noches!==1?'s':''}<br/>
+              ${r.num || ''} · ${r.total ? fmtEur(r.total) : '—'}
+            </div>
+          </div>
+          <div class="rli-actions">
+            ${statusBadge(r.estado)}
+            ${r.estado!=='Cancelada'?`<button class="action-btn action-btn--ghost" style="font-size:.58rem;padding:.4rem .8rem" onclick="modifyReserva('${r.id}','${r.entrada}','${r.salida}')">✎ Modificar</button>`:''}
+            ${r.estado!=='Cancelada'?`<button class="action-btn action-btn--danger" style="font-size:.58rem;padding:.4rem .8rem" onclick="cancelarReserva('${r.id}')">✕ Cancelar</button>`:''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function loadFacturas() {
+    const facturas = JSON.parse(localStorage.getItem('luxoria_facturas') || '[]');
+    const el = document.getElementById('facturasList');
+    if (!facturas.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.75rem;padding:2rem;text-align:center">No hay facturas generadas.</div>'; return; }
+    el.innerHTML = facturas.map(f => {
+      const hotel = Data.hotels().find(h => {
+        const est = Data.estancias?.() || [];
+        return est.find?.(e => e.id === f.estanciaId)?.hotelId === h.id;
+      });
+      return `
+        <div class="reservation-list-item">
+          <div>
+            <div class="rli-hotel">${f.num}</div>
+            <div class="rli-details">${DateUtil.fmt(f.fecha)} · IVA: ${f.ivaRate}% · ${fmtEur(f.total)}</div>
+          </div>
+          <div class="rli-actions">
+            <span class="status-badge ${f.estado==='Pagada'?'status-badge--green':'status-badge--gold'}">${f.estado==='Pagada'?'✓':'◈'} ${f.estado}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function loadHistorial() {
+    const reservas = JSON.parse(localStorage.getItem('luxoria_reservas') || '[]');
+    const pasadas  = reservas.filter(r => r.salida < DateUtil.today());
+    const el = document.getElementById('historialList');
+    if (!pasadas.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.75rem;padding:2rem;text-align:center">No hay estancias pasadas en tu historial.</div>'; return; }
+    el.innerHTML = pasadas.map(r => {
+      const hotel = Data.hotelById(r.hotelId), tipo = Data.tipoById(r.tipoHabId);
+      const noches = DateUtil.nights(r.entrada, r.salida);
+      return `
+        <div class="reservation-list-item">
+          <div>
+            <div class="rli-hotel">${hotel?.nombre||'—'}</div>
+            <div class="rli-details">${tipo?.nombre||'—'} · ${DateUtil.fmt(r.entrada)} → ${DateUtil.fmt(r.salida)} · ${noches} noches · ${fmtEur(r.total||0)}</div>
+          </div>
+          <div class="rli-actions">
+            <span class="status-badge status-badge--grey">◎ Finalizada</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function modifyReserva(id, entrada, salida) {
+    modifyingId = id;
+    document.getElementById('modEntrada').value = entrada;
+    document.getElementById('modSalida').value  = salida;
+    document.getElementById('modifyModal').style.display = 'flex';
+  }
+  window.modifyReserva = modifyReserva;
+
+  function closeModify() { document.getElementById('modifyModal').style.display = 'none'; }
+  window.closeModify = closeModify;
+
+  function saveModify() {
+    const entrada = document.getElementById('modEntrada').value;
+    const salida  = document.getElementById('modSalida').value;
+    if (!entrada || !salida || salida <= entrada) { showToast('Fechas inválidas.', 'error'); return; }
+    const reservas = JSON.parse(localStorage.getItem('luxoria_reservas') || '[]');
+    const i = reservas.findIndex(r => String(r.id) === String(modifyingId));
+    if (i !== -1) { reservas[i].entrada = entrada; reservas[i].salida = salida; localStorage.setItem('luxoria_reservas', JSON.stringify(reservas)); }
+    closeModify(); loadReservas(); showToast('Fechas actualizadas correctamente.', 'success');
+  }
+  window.saveModify = saveModify;
+
+  function cancelarReserva(id) {
+    if (!confirm('¿Cancelar esta reserva? Esta acción no se puede deshacer.')) return;
+    const reservas = JSON.parse(localStorage.getItem('luxoria_reservas') || '[]');
+    const i = reservas.findIndex(r => String(r.id) === String(id));
+    if (i !== -1) { reservas[i].estado = 'Cancelada'; localStorage.setItem('luxoria_reservas', JSON.stringify(reservas)); }
+    loadReservas(); showToast('Reserva cancelada.', 'error');
+  }
+  window.cancelarReserva = cancelarReserva;
+
+  initProfile();
+  </script>
+</body>
+</html>

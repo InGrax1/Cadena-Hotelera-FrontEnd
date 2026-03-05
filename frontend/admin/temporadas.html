@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXORIA — Gestión de Temporadas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <span class="nav__logo-icon">◈</span>
+      <span class="nav__logo-text">LUXORIA</span>
+      <span class="sidebar__badge">Admin</span>
+    </div>
+    <nav class="sidebar__nav">
+      <span class="sidebar__group-label">Principal</span>
+      <a href="index.html" class="sidebar__link">
+        <span class="sl-icon">⌂</span> Landing Page
+      </a>
+      <span class="sidebar__group-label">Gestión</span>
+      <a href="hoteles.html" class="sidebar__link">
+        <span class="sl-icon">▣</span> Hoteles
+      </a>
+      <a href="categorias.html" class="sidebar__link">
+        <span class="sl-icon">◇</span> Categorías
+      </a>
+      <a href="habitaciones-tipo.html" class="sidebar__link">
+        <span class="sl-icon">◎</span> Tipos de Habitación
+      </a>
+      <a href="temporadas.html" class="sidebar__link sidebar__link--active">
+        <span class="sl-icon">◉</span> Temporadas
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◈</span> Reservas <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">⬡</span> Huéspedes <span class="soon-tag">pronto</span>
+      </a>
+      <a href="#" class="sidebar__link sidebar__link--soon">
+        <span class="sl-icon">◉</span> Facturación <span class="soon-tag">pronto</span>
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar">A</div>
+        <div>
+          <div class="sidebar__uname">Admin</div>
+          <div class="sidebar__urole">Superusuario</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─────────────────────────────────────────────────── -->
+  <main class="admin-main">
+
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebarToggle">☰</button>
+      <div class="topbar-breadcrumb">
+        <span class="tb-muted">Admin</span>
+        <span class="tb-sep">›</span>
+        <span>Gestión de Temporadas</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date" id="topbarDate"></span>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- ── KPIs ─────────────────────────────────────────────── -->
+      <div class="kpi-grid">
+        <div class="kpi-card reveal">
+          <div class="kpi-icon" style="color:var(--gold)">◉</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Temporadas activas</span>
+            <span class="kpi-value" id="kpiActivas">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="60">
+          <div class="kpi-icon" style="color:#e05c5c">☀</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Temporadas altas</span>
+            <span class="kpi-value" id="kpiAltas">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="120">
+          <div class="kpi-icon" style="color:var(--blue)">⟳</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Temporadas medias</span>
+            <span class="kpi-value" id="kpiMedias">0</span>
+          </div>
+        </div>
+        <div class="kpi-card reveal" data-delay="180">
+          <div class="kpi-icon" style="color:var(--green)">❄</div>
+          <div class="kpi-body">
+            <span class="kpi-label">Temporadas bajas</span>
+            <span class="kpi-value" id="kpiBajas">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CALENDAR TIMELINE ──────────────────────────────────── -->
+      <div class="panel reveal" data-delay="40">
+        <div class="panel__header">
+          <div class="panel__title">
+            <span class="panel-icon">◉</span>
+            Vista de calendario anual
+          </div>
+          <div class="panel__tools">
+            <select class="admin-select" id="yearSelect"></select>
+          </div>
+        </div>
+        <div class="timeline-wrap" id="timelineWrap">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- ── CONTENT GRID ──────────────────────────────────────── -->
+      <div class="content-grid" style="margin-top:1.5rem">
+
+        <!-- Table panel -->
+        <div class="panel panel--wide reveal">
+          <div class="panel__header">
+            <div class="panel__title">
+              <span class="panel-icon">◉</span>
+              Temporadas registradas
+            </div>
+            <div class="panel__tools">
+              <div class="search-box">
+                <span class="search-icon">◎</span>
+                <input type="text" id="searchInput" placeholder="Buscar temporada..." />
+              </div>
+              <select class="admin-select" id="filterTipo">
+                <option value="">Todos los tipos</option>
+                <option value="Alta">☀ Alta</option>
+                <option value="Media">⟳ Media</option>
+                <option value="Baja">❄ Baja</option>
+              </select>
+              <button class="btn-admin btn-admin--primary" id="btnNuevo">
+                <span>+</span> Nueva temporada
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="admin-table" id="tempTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Fecha inicio</th>
+                  <th>Fecha fin</th>
+                  <th>Duración</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tempTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="table-footer">
+            <span class="table-count" id="tableCount">Mostrando 0 temporadas</span>
+          </div>
+        </div>
+
+        <!-- Detail card panel -->
+        <div class="panel reveal" data-delay="80" id="detailPanel">
+          <div class="panel__header">
+            <div class="panel__title">
+              <span class="panel-icon">◎</span>
+              Detalle
+            </div>
+          </div>
+          <div class="detail-placeholder" id="detailPlaceholder">
+            <div class="detail-ph-icon">◉</div>
+            <p>Selecciona una temporada<br/>para ver sus detalles</p>
+          </div>
+          <div class="detail-content" id="detailContent" style="display:none"></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ─── MODAL: CREAR / EDITAR ─────────────────────────────────── -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="tempModal">
+      <div class="modal__header">
+        <div class="modal__title" id="modalTitle">Nueva Temporada</div>
+        <button class="modal__close" id="modalClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <form id="tempForm" class="admin-form" novalidate>
+          <input type="hidden" id="fId" />
+
+          <div class="form-grid-2">
+            <div class="admin-field admin-field--full">
+              <label for="fNombre">Nombre <span class="req">*</span></label>
+              <input type="text" id="fNombre"
+                placeholder="Ej. Temporada Alta Verano 2025" required />
+              <span class="field-err" id="errNombre"></span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fTipo">Tipo de temporada <span class="req">*</span></label>
+              <select id="fTipo" required>
+                <option value="">Seleccionar…</option>
+                <option value="Alta">☀ Alta</option>
+                <option value="Media">⟳ Media</option>
+                <option value="Baja">❄ Baja</option>
+              </select>
+              <span class="field-err" id="errTipo"></span>
+            </div>
+            <div class="admin-field">
+              <label for="fMultiplicador">Multiplicador de tarifa</label>
+              <input type="number" id="fMultiplicador"
+                placeholder="1.0" min="0.1" max="5" step="0.1" />
+              <span class="field-hint">Ej: 1.8 = +80% sobre tarifa base</span>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="admin-field">
+              <label for="fFechaInicio">Fecha de inicio <span class="req">*</span></label>
+              <input type="date" id="fFechaInicio" required />
+              <span class="field-err" id="errFechaInicio"></span>
+            </div>
+            <div class="admin-field">
+              <label for="fFechaFin">Fecha de fin <span class="req">*</span></label>
+              <input type="date" id="fFechaFin" required />
+              <span class="field-err" id="errFechaFin"></span>
+            </div>
+          </div>
+
+          <div class="admin-field">
+            <label for="fDescripcion">Descripción / Notas</label>
+            <textarea id="fDescripcion" rows="2"
+              placeholder="Información adicional sobre esta temporada…"></textarea>
+          </div>
+
+          <!-- Duration preview -->
+          <div class="dur-preview" id="durPreview" style="display:none">
+            <div class="dur-prev-badge" id="durBadge"></div>
+            <div class="dur-prev-info" id="durInfo"></div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="btnCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--primary" id="btnGuardar">Guardar temporada</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── MODAL: CONFIRMAR ELIMINAR ────────────────────────────── -->
+  <div class="modal-backdrop" id="deleteBackdrop">
+    <div class="modal modal--sm">
+      <div class="modal__header">
+        <div class="modal__title">Eliminar temporada</div>
+        <button class="modal__close" id="deleteClose">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="delete-confirm">
+          <div class="delete-icon">⚠</div>
+          <p>¿Eliminar <strong id="deleteTempName"></strong>?</p>
+          <p class="delete-sub">Las tarifas asociadas perderán su referencia de temporada.</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="deleteCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--danger" id="deleteConfirm">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/temporadas.js"></script>
+</body>
+</html>

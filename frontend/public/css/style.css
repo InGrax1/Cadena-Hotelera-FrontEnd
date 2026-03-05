@@ -1,0 +1,1083 @@
+/* ─────────────────────────────────────────────────────────────
+   LUXORIA — Cadena Hotelera | CSS Principal
+   Aesthetic: Dark Luxury Bento Grid, Monospace, Gold Accents
+   ───────────────────────────────────────────────────────────── */
+
+/* ── VARIABLES ───────────────────────────────────────────────── */
+:root {
+  --bg:          #080810;
+  --bg-2:        #0e0e1a;
+  --bg-3:        #141425;
+  --card:        #10101e;
+  --card-border: #1e1e36;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c96a;
+  --gold-dim:    rgba(201,168,76,.12);
+  --blue:        #4a8ecb;
+  --blue-dim:    rgba(74,142,203,.12);
+  --white:       #f4f0e8;
+  --white-dim:   rgba(244,240,232,.06);
+  --muted:       #7a7895;
+  --red:         #e05c5c;
+  --green:       #5cba8c;
+  --radius:      1rem;
+  --radius-sm:   .6rem;
+  --transition:  .35s cubic-bezier(.4,0,.2,1);
+  --font-mono:   'Space Mono', monospace;
+  --font-serif:  'Cormorant Garamond', Georgia, serif;
+  --shadow:      0 24px 48px rgba(0,0,0,.5);
+  --glow-gold:   0 0 40px rgba(201,168,76,.2);
+}
+
+/* ── RESET ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-mono);
+  background: var(--bg);
+  color: var(--white);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+input, select, button { font-family: var(--font-mono); }
+select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+
+/* ── SCROLLBAR ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+/* ── SELECTION ───────────────────────────────────────────────── */
+::selection { background: var(--gold-dim); color: var(--gold); }
+
+/* ── UTILITY ─────────────────────────────────────────────────── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+
+/* ── REVEAL ANIMATIONS ───────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   NAV
+   ───────────────────────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.2rem 2.5rem;
+  background: rgba(8,8,16,.7);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--card-border);
+  transition: background var(--transition);
+}
+.nav.scrolled { background: rgba(8,8,16,.95); }
+.nav__logo {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  color: var(--white);
+}
+.nav__logo-icon { color: var(--gold); font-size: 1.3rem; }
+.nav__links {
+  display: flex;
+  gap: 2rem;
+  margin-left: 2rem;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-left: auto;
+}
+.nav__links a {
+  transition: color var(--transition);
+  text-transform: uppercase;
+}
+.nav__links a:hover { color: var(--white); }
+.nav__cta {
+  margin-left: 2rem;
+  padding: .6rem 1.4rem;
+  background: var(--gold);
+  color: var(--bg);
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+.nav__cta:hover { background: var(--gold-light); box-shadow: var(--glow-gold); }
+.nav__hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .4rem;
+  margin-left: auto;
+}
+.nav__hamburger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BENTO GRID BASE
+   ───────────────────────────────────────────────────────────── */
+.bento {
+  display: grid;
+  gap: 1rem;
+}
+.bento-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.bento-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HERO SECTION
+   ───────────────────────────────────────────────────────────── */
+.hero {
+  padding-top: 5rem;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: radial-gradient(ellipse at 70% 40%, rgba(201,168,76,.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(74,142,203,.06) 0%, transparent 60%),
+              var(--bg);
+}
+.hero__noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: .4;
+}
+.bento--hero {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 1rem;
+  padding: 6rem 2rem 4rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Card 1: Main heading */
+.bento-card--hero {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #10101e 0%, #14142a 100%);
+  border-color: rgba(201,168,76,.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 420px;
+}
+.bento-card__tag {
+  font-size: .65rem;
+  letter-spacing: .15em;
+  color: var(--gold);
+  text-transform: uppercase;
+  border: 1px solid var(--gold-dim);
+  display: inline-block;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  width: fit-content;
+}
+.hero__title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--white);
+  margin-top: 1.5rem;
+}
+.hero__title em {
+  font-style: italic;
+  color: var(--gold);
+}
+.hero__sub {
+  font-size: .78rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: .8rem;
+}
+.hero__stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--card-border);
+}
+.stat { display: flex; flex-direction: column; }
+.stat__num {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat__plus { color: var(--gold); font-size: 1.2rem; vertical-align: super; }
+.stat__label { font-size: .65rem; color: var(--muted); margin-top: .2rem; text-transform: uppercase; letter-spacing: .1em; }
+
+/* Card 2: Hero image */
+.bento-card--img {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  height: 280px;
+  position: relative;
+}
+.bento-card--img .bento-card__img {
+  transition: transform .8s ease;
+}
+.bento-card--img:hover .bento-card__img { transform: scale(1.04); }
+.bento-card__img-overlay {
+  position: absolute;
+  bottom: 1rem; left: 1rem;
+  display: flex; gap: .5rem; flex-wrap: wrap;
+}
+
+/* Card 3: Booking */
+.bento-card--booking {
+  grid-column: 3 / 4;
+  grid-row: 1 / 4;
+  padding: 2rem;
+  background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.booking-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.booking-icon { font-size: 1.2rem; }
+.booking-form { display: flex; flex-direction: column; gap: 1rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.form-field { display: flex; flex-direction: column; gap: .4rem; }
+.form-field label {
+  font-size: .62rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.form-field select,
+.form-field input {
+  background: var(--bg-3);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  padding: .7rem .9rem;
+  font-size: .75rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.form-field select:hover,
+.form-field input:hover,
+.form-field select:focus,
+.form-field input:focus {
+  border-color: var(--gold);
+}
+.form-field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(.4);
+  cursor: pointer;
+}
+.btn-book {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.4rem;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+  margin-top: .5rem;
+}
+.btn-book:hover {
+  background: var(--gold-light);
+  box-shadow: var(--glow-gold);
+  transform: translateY(-1px);
+}
+.btn-book__arrow {
+  font-size: 1.1rem;
+  transition: transform var(--transition);
+}
+.btn-book:hover .btn-book__arrow { transform: translateX(4px); }
+
+/* Card 4: Ambient */
+.bento-card--ambient {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  height: 200px;
+  position: relative;
+}
+.bento-card__ambient-text {
+  position: absolute;
+  bottom: 1rem; right: 1.2rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: rgba(255,255,255,.7);
+}
+
+/* Cards 5 & 6: Pills */
+.bento-card--pill {
+  grid-column: 1 / 2;
+  grid-row: 3 / 4;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-2);
+  border-color: rgba(201,168,76,.15);
+}
+.bento-card--pill-alt {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  background: var(--gold-dim);
+  border-color: rgba(201,168,76,.3);
+}
+.pill-icon {
+  font-size: 1.8rem;
+  color: var(--gold);
+}
+.bento-card--pill p {
+  font-size: .78rem;
+  color: var(--white);
+  line-height: 1.4;
+}
+
+/* Pills (image overlay) */
+.pill {
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  font-size: .65rem;
+  letter-spacing: .08em;
+  color: var(--white);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SECTIONS
+   ───────────────────────────────────────────────────────────── */
+.section {
+  padding: 6rem 0;
+}
+.section--dark {
+  background: var(--bg-2);
+}
+.section--accent {
+  background: linear-gradient(135deg, var(--bg-2) 0%, rgba(201,168,76,.04) 100%);
+}
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.section-tag {
+  font-size: .65rem;
+  letter-spacing: .2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: .5rem;
+}
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--white);
+}
+.section-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+.section-link {
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .08em;
+  margin-left: auto;
+  transition: color var(--transition);
+}
+.section-link:hover { color: var(--gold); }
+
+/* ─────────────────────────────────────────────────────────────
+   FEATURES BENTO
+   ───────────────────────────────────────────────────────────── */
+.bento--features {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+}
+.bento-card--feature {
+  padding: 2rem;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bento-card--feature-dark {
+  background: var(--bg-3);
+}
+.bento-card--feature-gold {
+  background: var(--gold-dim);
+  border-color: rgba(201,168,76,.3);
+}
+.bento-card--feature-wide {
+  grid-column: 1 / 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  align-items: center;
+  background: linear-gradient(135deg, var(--bg-3) 0%, rgba(74,142,203,.05) 100%);
+  border-color: rgba(74,142,203,.2);
+}
+.feature-icon {
+  font-size: 1.6rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.bento-card--feature h3 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: .5rem;
+}
+.bento-card--feature p,
+.feature-wide__content p {
+  font-size: .72rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.feature-wide__content h3 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: .6rem;
+}
+.feature-tag {
+  font-size: .6rem;
+  letter-spacing: .15em;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  width: fit-content;
+}
+.mini-dashboard {
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+}
+.dash-row {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .68rem;
+  color: var(--muted);
+}
+.dash-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dash-dot--green  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.dash-dot--gold   { background: var(--gold);  box-shadow: 0 0 6px var(--gold); }
+.dash-dot--blue   { background: var(--blue);  box-shadow: 0 0 6px var(--blue); }
+
+/* ─────────────────────────────────────────────────────────────
+   HOTELS BENTO
+   ───────────────────────────────────────────────────────────── */
+.bento--hotels {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 340px 300px;
+}
+.bento-card--hotel { position: relative; overflow: hidden; cursor: pointer; }
+.bento-card--hotel-large {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+}
+.hotel-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s ease;
+}
+.bento-card--hotel:hover .hotel-img { transform: scale(1.06); }
+.hotel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.8) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.5rem;
+  transition: background var(--transition);
+}
+.bento-card--hotel:hover .hotel-overlay {
+  background: linear-gradient(to top, rgba(0,0,0,.9) 0%, rgba(0,0,0,.2) 100%);
+}
+.hotel-stars { font-size: .7rem; color: var(--gold); margin-bottom: .4rem; letter-spacing: .1em; }
+.hotel-name {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--white);
+}
+.hotel-loc { font-size: .68rem; color: rgba(255,255,255,.6); margin-top: .3rem; }
+.hotel-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: .8rem;
+  font-size: .7rem;
+  color: rgba(255,255,255,.7);
+}
+.hotel-meta strong { color: var(--gold); }
+.hotel-tag {
+  background: var(--gold-dim);
+  color: var(--gold);
+  border: 1px solid rgba(201,168,76,.3);
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  font-size: .6rem;
+}
+.bento-card--stat {
+  grid-column: 3 / 4;
+  grid-row: 2 / 3;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--bg-3) 100%);
+  border-color: rgba(201,168,76,.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+.stat-big { display: flex; flex-direction: column; }
+.stat-big__num {
+  font-family: var(--font-serif);
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+}
+.stat-big__label {
+  font-size: .65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-top: .2rem;
+}
+.stat-note { font-size: .7rem; color: var(--muted); line-height: 1.6; }
+
+/* ─────────────────────────────────────────────────────────────
+   ROOMS BENTO
+   ───────────────────────────────────────────────────────────── */
+.bento--rooms {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 280px 280px;
+}
+.bento-card--room {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bento-card--room-accent {
+  background: var(--blue-dim);
+  border-color: rgba(74,142,203,.3);
+}
+.bento-card--room-dark {
+  background: var(--bg-3);
+}
+.bento-card--room-gold {
+  background: var(--gold-dim);
+  border-color: rgba(201,168,76,.3);
+  grid-column: 4 / 5;
+  grid-row: 2 / 3;
+}
+.bento-card--room-img {
+  grid-column: 3 / 5;
+  grid-row: 1 / 2;
+  position: relative;
+  overflow: hidden;
+}
+.room-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s ease;
+}
+.bento-card--room-img:hover .room-img { transform: scale(1.04); }
+.room-img-label {
+  position: absolute;
+  top: 1rem; left: 1rem;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: .35rem .9rem;
+  border-radius: 999px;
+  font-size: .65rem;
+  color: var(--white);
+}
+.room-number {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: rgba(201,168,76,.3);
+  line-height: 1;
+}
+.room-type {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--white);
+  margin-top: .5rem;
+}
+.room-desc { font-size: .72rem; color: var(--muted); line-height: 1.6; margin-top: .5rem; }
+.room-price { font-size: .8rem; color: var(--white); margin-top: auto; padding-top: 1rem; }
+.room-price strong { color: var(--gold); }
+.room-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-top: .6rem;
+}
+.room-features span {
+  background: var(--white-dim);
+  border: 1px solid var(--card-border);
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  font-size: .6rem;
+  color: var(--muted);
+}
+
+/* Season grid */
+.season-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.season-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform var(--transition), border-color var(--transition);
+}
+.season-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+.season-card--active {
+  border-color: rgba(201,168,76,.4);
+  background: var(--gold-dim);
+}
+.season-icon { font-size: 1.6rem; margin-bottom: .6rem; }
+.season-name { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.season-mult {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin-top: .4rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   AGENCY BENTO
+   ───────────────────────────────────────────────────────────── */
+.bento--agency {
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 1rem;
+}
+.bento-card--agency-text {
+  padding: 2.5rem;
+  background: var(--card);
+  border-color: rgba(201,168,76,.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.bento-card--agency-text p {
+  font-size: .74rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 1.5rem 0;
+}
+.btn-outline {
+  display: inline-flex;
+  padding: .75rem 1.5rem;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: var(--radius-sm);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: background var(--transition), color var(--transition);
+  width: fit-content;
+}
+.btn-outline:hover { background: var(--gold); color: var(--bg); }
+.bento-card--agency-features {
+  padding: 2rem;
+  background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.agency-feature {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.af-icon {
+  font-size: 1.2rem;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: .1rem;
+}
+.agency-feature strong { display: block; font-size: .76rem; color: var(--white); margin-bottom: .2rem; }
+.agency-feature p { font-size: .68rem; color: var(--muted); line-height: 1.5; }
+.bento-card--agency-img {
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+}
+.agency-badge {
+  position: absolute;
+  bottom: 1.5rem; right: 1.5rem;
+  background: rgba(201,168,76,.9);
+  backdrop-filter: blur(8px);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  color: var(--bg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.ab-num {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+}
+.ab-label { font-size: .65rem; text-transform: uppercase; letter-spacing: .1em; display: block; }
+
+/* ─────────────────────────────────────────────────────────────
+   TICKER
+   ───────────────────────────────────────────────────────────── */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  padding: 1rem 0;
+  background: var(--bg-2);
+}
+.ticker-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: ticker 30s linear infinite;
+}
+.ticker-track span {
+  font-size: .72rem;
+  letter-spacing: .2em;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ticker-track span:nth-child(even) { color: var(--gold); }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CTA
+   ───────────────────────────────────────────────────────────── */
+.cta-section {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, var(--bg-3) 0%, rgba(201,168,76,.06) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.cta-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.cta-section .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+.cta-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  color: var(--white);
+  margin: 1rem 0;
+}
+.cta-title em { color: var(--gold); font-style: italic; }
+.cta-sub { font-size: .78rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
+.cta-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: .9rem 1.8rem;
+  background: var(--gold);
+  color: var(--bg);
+  border-radius: var(--radius-sm);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.btn-primary:hover {
+  background: var(--gold-light);
+  box-shadow: var(--glow-gold);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: .9rem 1.8rem;
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--muted);
+  border-radius: var(--radius-sm);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: border-color var(--transition), color var(--transition);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.cta-img-wrap {
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 420px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+}
+.cta-img-wrap img { height: 100%; object-fit: cover; }
+
+/* ─────────────────────────────────────────────────────────────
+   FOOTER
+   ───────────────────────────────────────────────────────────── */
+.footer {
+  background: var(--bg-2);
+  border-top: 1px solid var(--card-border);
+  padding: 4rem 0 2rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+.footer-brand p {
+  font-size: .72rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 1rem;
+}
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.footer-socials a {
+  width: 34px; height: 34px;
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+  color: var(--muted);
+  transition: border-color var(--transition), color var(--transition);
+}
+.footer-socials a:hover { border-color: var(--gold); color: var(--gold); }
+.footer-col h4 {
+  font-size: .7rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 1.2rem;
+}
+.footer-col a {
+  display: block;
+  font-size: .72rem;
+  color: var(--muted);
+  margin-bottom: .7rem;
+  transition: color var(--transition);
+}
+.footer-col a:hover { color: var(--gold); }
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2rem;
+  border-top: 1px solid var(--card-border);
+  font-size: .65rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-legal { display: flex; gap: 1.5rem; }
+.footer-legal a { transition: color var(--transition); }
+.footer-legal a:hover { color: var(--gold); }
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE — TABLET (≤ 1024px)
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .bento--hero {
+    grid-template-columns: 1fr 1fr;
+    padding: 5rem 1.5rem 3rem;
+  }
+  .bento-card--hero { grid-column: 1 / 2; grid-row: 1 / 2; }
+  .bento-card--img  { grid-column: 2 / 3; grid-row: 1 / 2; }
+  .bento-card--booking { grid-column: 1 / 3; grid-row: 2 / 3; }
+  .bento-card--ambient { grid-column: 1 / 2; grid-row: 3 / 4; }
+  .bento-card--pill    { grid-column: 1 / 2; grid-row: 4 / 5; }
+  .bento-card--pill-alt{ grid-column: 2 / 3; grid-row: 3 / 4; }
+
+  .bento--features { grid-template-columns: 1fr 1fr; }
+  .bento-card--feature-wide { grid-column: 1 / 3; grid-template-columns: 1fr; }
+  .feature-wide__img { display: none; }
+
+  .bento--hotels {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 280px 280px 260px;
+  }
+  .bento-card--hotel-large { grid-column: 1 / 3; grid-row: 1 / 2; }
+  .bento-card--stat { grid-column: 1 / 3; }
+
+  .bento--rooms { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .bento-card--room-img { grid-column: 1 / 3; height: 250px; }
+  .bento-card--room-gold { grid-column: auto; grid-row: auto; }
+
+  .bento--agency { grid-template-columns: 1fr 1fr; }
+  .bento-card--agency-img { grid-column: 1 / 3; height: 260px; }
+
+  .footer-grid { grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+  .footer-brand { grid-column: 1 / 4; }
+
+  .cta-section .container { grid-template-columns: 1fr; }
+  .cta-img-wrap { height: 300px; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE — MOBILE (≤ 640px)
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .nav { padding: 1rem 1.2rem; }
+  .nav__links, .nav__cta { display: none; }
+  .nav__hamburger { display: flex; }
+
+  /* Mobile nav open state */
+  .nav.open .nav__links {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: rgba(8,8,16,.97);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 1.5rem 2rem;
+    gap: 1rem;
+    font-size: .85rem;
+    margin-left: 0;
+  }
+  .nav.open .nav__cta {
+    display: block;
+    margin: 0 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .bento--hero {
+    grid-template-columns: 1fr;
+    padding: 4.5rem 1rem 2rem;
+  }
+  .bento-card--hero  { grid-column: 1; grid-row: 1; min-height: auto; padding: 2rem; }
+  .bento-card--img   { grid-column: 1; grid-row: 2; height: 240px; }
+  .bento-card--booking { grid-column: 1; grid-row: 3; padding: 1.5rem; }
+  .bento-card--ambient { display: none; }
+  .bento-card--pill    { grid-column: 1 / 1; grid-row: 4; }
+  .bento-card--pill-alt{ grid-column: 1 / 1; grid-row: 5; }
+  .form-row { grid-template-columns: 1fr; }
+
+  .bento--features { grid-template-columns: 1fr; }
+  .bento-card--feature-wide { grid-column: 1; }
+
+  .bento--hotels {
+    grid-template-columns: 1fr;
+    grid-template-rows: 260px 220px 220px 220px auto;
+  }
+  .bento-card--hotel-large { grid-column: 1; }
+
+  .bento--rooms { grid-template-columns: 1fr; }
+  .bento-card--room-img { grid-column: 1; }
+  .season-grid { grid-template-columns: 1fr; }
+
+  .bento--agency { grid-template-columns: 1fr; }
+  .bento-card--agency-img { grid-column: 1; }
+
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / 3; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+
+  .cta-section .container { grid-template-columns: 1fr; gap: 2rem; }
+  .section { padding: 4rem 0; }
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .section-link { margin-left: 0; }
+}

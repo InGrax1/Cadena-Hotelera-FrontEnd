@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Detalle de Reserva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container" style="max-width:960px">
+      <div class="booking-steps" id="bookingSteps"></div>
+      <div class="page-header">
+        <div class="page-header__eyebrow">Paso 3 de 6</div>
+        <h1 class="page-header__title">Detalle de tu Reserva</h1>
+        <p class="page-header__sub">Revisa los detalles antes de continuar.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start">
+        <!-- Left: detail breakdown -->
+        <div>
+          <!-- Hotel + Room summary card -->
+          <div class="form-card">
+            <div class="form-card__title">◈ Resumen de estancia</div>
+            <div style="display:grid;grid-template-columns:180px 1fr;gap:1.2rem;align-items:center;margin-bottom:1.5rem">
+              <div style="border-radius:var(--radius-sm);overflow:hidden;height:130px">
+                <img id="summaryImg" src="" alt="" style="width:100%;height:100%;object-fit:cover"/>
+              </div>
+              <div>
+                <div id="summaryHotel" style="font-family:var(--font-serif);font-size:1.1rem;color:var(--white);margin-bottom:.3rem"></div>
+                <div id="summaryStars" style="color:var(--star-color);font-size:.75rem;margin-bottom:.4rem"></div>
+                <div id="summaryRoom" style="font-size:.75rem;color:var(--muted);margin-bottom:.3rem"></div>
+                <div id="summaryLocation" style="font-size:.65rem;color:var(--muted)"></div>
+              </div>
+            </div>
+            <div class="os-dates">
+              <div class="os-date"><div class="os-date-label">Check-in</div><div class="os-date-val" id="detEntrada"></div></div>
+              <div class="os-date"><div class="os-date-label">Check-out</div><div class="os-date-val" id="detSalida"></div></div>
+            </div>
+            <div id="detSeason" style="margin-top:.6rem"></div>
+          </div>
+
+          <!-- Price breakdown -->
+          <div class="form-card">
+            <div class="form-card__title">▩ Desglose de precio</div>
+            <div class="os-line"><span id="breakNocheLabel">Alojamiento (— noches × €—)</span><strong id="breakSubtotal">—</strong></div>
+            <div class="os-line"><span>Servicios e impuestos</span><strong>Incluidos</strong></div>
+            <div class="os-divider"></div>
+            <div class="os-line"><span id="breakIvaLabel">IVA (—%)</span><strong id="breakIva">—</strong></div>
+            <div class="os-divider"></div>
+            <div class="os-total"><span>Total</span><strong id="breakTotal">—</strong></div>
+          </div>
+
+          <!-- Policies -->
+          <div class="policies-box" style="margin-bottom:1.5rem">
+            <strong>Política de cancelación:</strong> Cancelación gratuita hasta 48 horas antes de la llegada.
+            A partir de ese momento se aplicará un cargo equivalente a 1 noche de alojamiento.
+            No reembolsable en temporada alta y festivos.
+          </div>
+
+          <button class="btn-full" onclick="window.location.href='huesped.html'">Continuar con datos del huésped ›</button>
+          <a href="habitaciones.html" class="btn-secondary">← Cambiar habitación</a>
+        </div>
+
+        <!-- Right: sticky summary -->
+        <div class="order-summary">
+          <div class="os-title">Tu reserva</div>
+          <div class="os-hotel-name" id="sideHotel"></div>
+          <div class="os-room" id="sideRoom"></div>
+          <div class="os-dates">
+            <div class="os-date"><div class="os-date-label">Entrada</div><div class="os-date-val" id="sideEntrada"></div></div>
+            <div class="os-date"><div class="os-date-label">Salida</div><div class="os-date-val" id="sideSalida"></div></div>
+          </div>
+          <div class="os-line"><span>Por noche</span><strong id="sidePrecioNoche">—</strong></div>
+          <div class="os-line"><span id="sideNochesLabel">Noches</span><strong id="sideNoches">—</strong></div>
+          <div class="os-line"><span>Subtotal</span><strong id="sideSubtotal">—</strong></div>
+          <div class="os-line"><span id="sideIvaLabel">IVA</span><strong id="sideIva">—</strong></div>
+          <div class="os-divider"></div>
+          <div class="os-total"><span>Total</span><strong id="sideTotal">—</strong></div>
+          <div id="sideSeason"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, renderStars, seasonBadge, fmtEur, buildClientNav, renderBookingSteps } = LuxClient;
+  buildClientNav();
+  renderBookingSteps(document.getElementById('bookingSteps'), 3);
+
+  const sess = BookingSession.get();
+  if (!sess.hotelId || !sess.tipoId) window.location.href = 'busqueda.html';
+
+  const hotel  = Data.hotelById(sess.hotelId);
+  const tipo   = Data.tipoById(sess.tipoId);
+  const noches = DateUtil.nights(sess.entrada, sess.salida);
+  const IMGS   = {1:'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80',2:'https://images.unsplash.com/photo-1549180030-48bf079fb38a?w=800&q=80',3:'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80',4:'https://images.unsplash.com/photo-1514025727944-b1b34eaad79a?w=800&q=80',5:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',6:'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80'};
+
+  document.getElementById('summaryImg').src      = hotel?.img || IMGS[sess.hotelId] || IMGS[1];
+  document.getElementById('summaryHotel').textContent  = hotel?.nombre || '—';
+  document.getElementById('summaryStars').textContent  = renderStars(hotel?.categoria || 3);
+  document.getElementById('summaryRoom').textContent   = tipo?.nombre || '—';
+  document.getElementById('summaryLocation').textContent = `◎ ${hotel?.ciudad}, ${hotel?.pais}`;
+  document.getElementById('detEntrada').textContent    = DateUtil.fmt(sess.entrada);
+  document.getElementById('detSalida').textContent     = DateUtil.fmt(sess.salida);
+  if (sess.temporadaNombre) document.getElementById('detSeason').innerHTML = seasonBadge({ nombre:sess.temporadaNombre, tipo:sess.temporadaTipo });
+
+  document.getElementById('breakNocheLabel').textContent = `Alojamiento (${noches} noche${noches!==1?'s':''} × ${fmtEur(sess.precio)})`;
+  document.getElementById('breakSubtotal').textContent   = fmtEur(sess.subtotal);
+  document.getElementById('breakIvaLabel').textContent   = `IVA (${sess.ivaRate}%)`;
+  document.getElementById('breakIva').textContent        = fmtEur(sess.ivaAmt);
+  document.getElementById('breakTotal').textContent      = fmtEur(sess.total);
+
+  document.getElementById('sideHotel').textContent    = hotel?.nombre || '—';
+  document.getElementById('sideRoom').textContent     = tipo?.nombre || '—';
+  document.getElementById('sideEntrada').textContent  = DateUtil.fmtShort(sess.entrada);
+  document.getElementById('sideSalida').textContent   = DateUtil.fmtShort(sess.salida);
+  document.getElementById('sidePrecioNoche').textContent = fmtEur(sess.precio);
+  document.getElementById('sideNochesLabel').textContent = `${noches} noche${noches!==1?'s':''}`;
+  document.getElementById('sideNoches').textContent   = fmtEur(sess.subtotal);
+  document.getElementById('sideIvaLabel').textContent = `IVA (${sess.ivaRate}%)`;
+  document.getElementById('sideIva').textContent      = fmtEur(sess.ivaAmt);
+  document.getElementById('sideTotal').textContent    = fmtEur(sess.total);
+  if (sess.temporadaNombre) document.getElementById('sideSeason').innerHTML = seasonBadge({ nombre:sess.temporadaNombre, tipo:sess.temporadaTipo });
+  </script>
+</body>
+</html>

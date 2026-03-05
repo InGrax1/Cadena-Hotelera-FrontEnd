@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Buscar Hoteles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+
+  <div class="client-page">
+    <!-- Search bar -->
+    <div style="background:var(--bg-2);border-bottom:1px solid rgba(255,255,255,.06);padding:1.5rem 0">
+      <div style="max-width:1200px;margin:0 auto;padding:0 2rem">
+        <div class="search-bar">
+          <div class="sb-field">
+            <label>Destino</label>
+            <input type="text" id="sbDestino" placeholder="Ciudad o hotel…"/>
+          </div>
+          <div class="sb-field">
+            <label>Entrada</label>
+            <input type="date" id="sbEntrada"/>
+          </div>
+          <div class="sb-field">
+            <label>Salida</label>
+            <input type="date" id="sbSalida"/>
+          </div>
+          <div class="sb-field" style="max-width:120px">
+            <label>Huéspedes</label>
+            <select id="sbHuespedes">
+              <option value="1">1 persona</option>
+              <option value="2" selected>2 personas</option>
+              <option value="3">3 personas</option>
+              <option value="4">4 personas</option>
+            </select>
+          </div>
+          <button class="sb-btn" id="sbSearch">Buscar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="client-container--wide">
+      <div class="results-layout">
+        <!-- Filters -->
+        <aside class="filters-panel">
+          <div class="fp-title">Filtros</div>
+          <div class="fp-section">
+            <div class="fp-section-label">Precio por noche</div>
+            <input type="range" class="fp-range" id="fpPrecio" min="0" max="2000" value="2000"/>
+            <div class="fp-range-vals"><span>€0</span><span id="fpPrecioVal">€2,000+</span></div>
+          </div>
+          <div class="fp-section">
+            <div class="fp-section-label">Categoría</div>
+            <div class="fp-checkboxes">
+              <label class="fp-check"><input type="checkbox" value="5" class="fp-cat"/><span>⭑⭑⭑⭑⭑ 5 Estrellas</span></label>
+              <label class="fp-check"><input type="checkbox" value="4" class="fp-cat"/><span>⭑⭑⭑⭑ 4 Estrellas</span></label>
+              <label class="fp-check"><input type="checkbox" value="3" class="fp-cat"/><span>⭑⭑⭑ 3 Estrellas</span></label>
+            </div>
+          </div>
+          <div class="fp-section">
+            <div class="fp-section-label">Tipo de habitación</div>
+            <select class="fp-select" id="fpTipo">
+              <option value="">Cualquier tipo</option>
+            </select>
+          </div>
+          <div class="fp-section">
+            <div class="fp-section-label">Temporada</div>
+            <select class="fp-select" id="fpTemp">
+              <option value="">Cualquier temporada</option>
+              <option value="Alta">☀ Temporada Alta</option>
+              <option value="Media">⟳ Temporada Media</option>
+              <option value="Baja">❄ Temporada Baja</option>
+            </select>
+          </div>
+          <button class="fp-btn-apply" id="fpApply">Aplicar filtros</button>
+          <button class="fp-btn-clear" id="fpClear">Limpiar filtros</button>
+        </aside>
+
+        <!-- Results -->
+        <div>
+          <div class="results-header">
+            <div class="results-count"><strong id="resultCount">0</strong> hoteles encontrados</div>
+            <select class="results-sort" id="sortBy">
+              <option value="recom">Recomendados</option>
+              <option value="precio-asc">Precio: menor a mayor</option>
+              <option value="precio-desc">Precio: mayor a menor</option>
+              <option value="rating">Mejor valorados</option>
+              <option value="estrellas">Categoría</option>
+            </select>
+          </div>
+          <div class="hotels-grid" id="hotelsGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="clientToasts" class="toast-container"></div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, ClientUser, Data, DateUtil, renderStars, fmtEur, buildClientNav } = LuxClient;
+  buildClientNav('hoteles');
+
+  /* Init dates from session */
+  const sess = BookingSession.get();
+  const today = DateUtil.today(), tomorrow = DateUtil.addDays(today, 1);
+  document.getElementById('sbEntrada').value = sess.entrada || today;
+  document.getElementById('sbSalida').value  = sess.salida  || tomorrow;
+  document.getElementById('sbDestino').value = sess.destino || '';
+  document.getElementById('sbHuespedes').value = sess.huespedes || '2';
+
+  /* Populate tipo filter */
+  const tipos = Data.tipos();
+  document.getElementById('fpTipo').innerHTML = '<option value="">Cualquier tipo</option>' +
+    tipos.map(t => `<option value="${t.id}">${t.nombre}</option>`).join('');
+
+  let filters = { destino:'', maxPrecio:2000, cats:[], tipoId:'', tempTipo:'' };
+  let sortBy = 'recom';
+
+  /* Range display */
+  document.getElementById('fpPrecio').addEventListener('input', e => {
+    const v = parseInt(e.target.value);
+    document.getElementById('fpPrecioVal').textContent = v >= 2000 ? '€2,000+' : `€${v}`;
+    filters.maxPrecio = v >= 2000 ? Infinity : v;
+  });
+
+  function applyFilters() {
+    filters.cats = [...document.querySelectorAll('.fp-cat:checked')].map(c => parseInt(c.value));
+    filters.tipoId = document.getElementById('fpTipo').value;
+    filters.tempTipo = document.getElementById('fpTemp').value;
+    renderHotels();
+  }
+  function clearFilters() {
+    document.querySelectorAll('.fp-cat').forEach(c => c.checked = false);
+    document.getElementById('fpTipo').value = '';
+    document.getElementById('fpTemp').value = '';
+    document.getElementById('fpPrecio').value = 2000;
+    document.getElementById('fpPrecioVal').textContent = '€2,000+';
+    filters = { destino:filters.destino, maxPrecio:Infinity, cats:[], tipoId:'', tempTipo:'' };
+    renderHotels();
+  }
+
+  document.getElementById('fpApply').addEventListener('click', applyFilters);
+  document.getElementById('fpClear').addEventListener('click', clearFilters);
+  document.getElementById('sortBy').addEventListener('change', e => { sortBy = e.target.value; renderHotels(); });
+  document.getElementById('sbSearch').addEventListener('click', () => {
+    const entrada = document.getElementById('sbEntrada').value;
+    const salida  = document.getElementById('sbSalida').value;
+    const destino = document.getElementById('sbDestino').value.trim();
+    const huesp   = document.getElementById('sbHuespedes').value;
+    BookingSession.set({ entrada, salida, destino, huespedes: huesp });
+    filters.destino = destino.toLowerCase();
+    renderHotels();
+  });
+
+  const RATINGS = { 1:9.2,2:9.4,3:9.6,4:9.1,5:8.9,6:8.4 };
+  const IMGS = {
+    1:'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80',
+    2:'https://images.unsplash.com/photo-1549180030-48bf079fb38a?w=800&q=80',
+    3:'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80',
+    4:'https://images.unsplash.com/photo-1514025727944-b1b34eaad79a?w=800&q=80',
+    5:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',
+    6:'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80',
+  };
+
+  function renderHotels() {
+    let hotels = Data.hotels();
+
+    /* Text filter */
+    if (filters.destino) {
+      const q = filters.destino.toLowerCase();
+      hotels = hotels.filter(h => h.nombre.toLowerCase().includes(q) || (h.ciudad||'').toLowerCase().includes(q) || (h.pais||'').toLowerCase().includes(q));
+    }
+    /* Stars filter */
+    if (filters.cats.length) hotels = hotels.filter(h => filters.cats.includes(h.categoria));
+    /* Tipo + price filter */
+    const sess = BookingSession.get();
+    hotels = hotels.filter(h => {
+      const min = Data.minPrice(h.id);
+      if (min === null) return true;
+      if (filters.tipoId) {
+        const tar = Data.getTarifa(h.id, filters.tipoId, sess.entrada);
+        if (!tar) return false;
+        if (tar.precio > filters.maxPrecio) return false;
+        if (filters.tempTipo && tar.temporada?.tipo !== filters.tempTipo) return false;
+      } else {
+        if (min > filters.maxPrecio) return false;
+      }
+      return true;
+    });
+
+    /* Sort */
+    hotels = [...hotels].sort((a, b) => {
+      if (sortBy === 'precio-asc') return (Data.minPrice(a.id)||0) - (Data.minPrice(b.id)||0);
+      if (sortBy === 'precio-desc') return (Data.minPrice(b.id)||0) - (Data.minPrice(a.id)||0);
+      if (sortBy === 'rating') return (RATINGS[b.id]||8) - (RATINGS[a.id]||8);
+      if (sortBy === 'estrellas') return b.categoria - a.categoria;
+      return 0;
+    });
+
+    document.getElementById('resultCount').textContent = hotels.length;
+    const grid = document.getElementById('hotelsGrid');
+
+    if (!hotels.length) {
+      grid.innerHTML = `<div class="no-results"><div class="no-results-icon">◎</div><p>No se encontraron hoteles con esos criterios.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = hotels.map(h => {
+      const price = Data.minPrice(h.id);
+      const rating = RATINGS[h.id] || 8.5;
+      const img = h.img || IMGS[h.id] || IMGS[1];
+      return `
+        <div class="hotel-card reveal" onclick="selectHotel(${h.id})">
+          <div class="hotel-card__img">
+            <img src="${img}" alt="${h.nombre}" loading="lazy"/>
+            <div class="hotel-card__badges">
+              <span class="hc-badge hc-badge--gold">${h.categoria}★</span>
+              <span class="hc-badge">${h.ciudad||''}, ${h.pais||''}</span>
+            </div>
+            <div class="hotel-card__fav" onclick="event.stopPropagation();this.classList.toggle('active');this.textContent=this.classList.contains('active')?'♥':'♡'">♡</div>
+          </div>
+          <div class="hotel-card__body">
+            <div class="hotel-card__stars">${renderStars(h.categoria)}</div>
+            <div class="hotel-card__name">${h.nombre}</div>
+            <div class="hotel-card__location">${h.ciudad||''}, ${h.pais||''}</div>
+            <div class="hotel-card__footer">
+              <div>
+                <div class="hotel-card__price-label">Desde</div>
+                <div class="hotel-card__price">${price ? fmtEur(price) : '—'} <span>/ noche</span></div>
+              </div>
+              <div class="hotel-card__rating"><strong>${rating}</strong> / 10</div>
+            </div>
+            <a class="hotel-card__cta" onclick="event.stopPropagation();selectHotel(${h.id})">Ver hotel ›</a>
+          </div>
+        </div>`;
+    }).join('');
+
+    /* Reveal animation */
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.hotel-card.reveal').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          el.style.transition = 'opacity .4s ease, transform .4s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, i * 60);
+      });
+    });
+  }
+
+  function selectHotel(id) {
+    BookingSession.set({ hotelId: id });
+    window.location.href = `hotel-detalle.html?id=${id}`;
+  }
+  window.selectHotel = selectHotel;
+
+  renderHotels();
+  </script>
+</body>
+</html>

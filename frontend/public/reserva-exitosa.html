@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — ¡Reserva Confirmada!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container--narrow" style="text-align:center;padding-top:4rem">
+      <div class="success-icon">✓</div>
+      <div style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">Reserva confirmada</div>
+      <h1 style="font-family:var(--font-serif);font-size:2.2rem;font-weight:300;color:var(--white);margin-bottom:.5rem">¡Tu estancia está reservada!</h1>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:2rem">Recibirás un email de confirmación en breve. Nos vemos en el hotel.</p>
+      <div class="reservation-number" id="resNum">LXR-2025-—</div>
+      <div style="font-size:.62rem;color:var(--muted);margin-bottom:2rem">Número de reserva</div>
+
+      <!-- Confirmation card -->
+      <div class="confirmation-card" style="text-align:left;margin-bottom:2rem">
+        <div class="cc-header">
+          <div id="sucHotel" style="font-family:var(--font-serif);font-size:1.1rem;color:var(--white)"></div>
+          <div id="sucStars" style="color:var(--star-color);font-size:.75rem;margin-top:.2rem"></div>
+        </div>
+        <div class="cc-body">
+          <div class="cc-row"><span>Habitación</span><strong id="sucRoom"></strong></div>
+          <div class="cc-row"><span>Check-in</span><strong id="sucEntrada"></strong></div>
+          <div class="cc-row"><span>Check-out</span><strong id="sucSalida"></strong></div>
+          <div class="cc-row"><span>Duración</span><strong id="sucNoches"></strong></div>
+          <div class="cc-row"><span>Huésped</span><strong id="sucNombre"></strong></div>
+          <div class="cc-row"><span>Método de pago</span><strong id="sucMetodo"></strong></div>
+          <div class="cc-row cc-row--total"><span>Total pagado</span><strong id="sucTotal"></strong></div>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <a href="#" class="action-btn action-btn--primary" onclick="downloadConfirmation()">⬇ Descargar confirmación</a>
+        <a href="perfil.html" class="action-btn action-btn--ghost">Mis reservas</a>
+        <a href="index.html" class="action-btn action-btn--ghost">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, renderStars, fmtEur, buildClientNav, ClientUser } = LuxClient;
+  buildClientNav();
+
+  const sess = BookingSession.get();
+  const hotel = Data.hotelById(sess.hotelId), tipo = Data.tipoById(sess.tipoId);
+  const noches = DateUtil.nights(sess.entrada, sess.salida);
+  const METODO_LABELS = { tarjeta:'Tarjeta de crédito', paypal:'PayPal', transferencia:'Transferencia bancaria', hotel:'Pago en hotel' };
+
+  document.getElementById('resNum').textContent    = sess.reservaNum || 'LXR-2025-—';
+  document.getElementById('sucHotel').textContent  = hotel?.nombre || '—';
+  document.getElementById('sucStars').textContent  = renderStars(hotel?.categoria || 3);
+  document.getElementById('sucRoom').textContent   = tipo?.nombre || '—';
+  document.getElementById('sucEntrada').textContent= DateUtil.fmt(sess.entrada);
+  document.getElementById('sucSalida').textContent = DateUtil.fmt(sess.salida);
+  document.getElementById('sucNoches').textContent = `${noches} noche${noches!==1?'s':''}`;
+  document.getElementById('sucNombre').textContent = `${sess.nombre||''} ${sess.apellido||''}`.trim();
+  document.getElementById('sucMetodo').textContent = METODO_LABELS[sess.metodoPago] || '—';
+  document.getElementById('sucTotal').textContent  = fmtEur(sess.total);
+
+  /* Save user profile if not logged */
+  if (sess.nombre && !ClientUser.get()) {
+    ClientUser.set({ nombre: `${sess.nombre} ${sess.apellido||''}`.trim(), email: sess.email, telefono: sess.telefono });
+  }
+
+  /* Clear booking session after success */
+  setTimeout(() => BookingSession.clear(), 2000);
+
+  function downloadConfirmation() {
+    const w = window.open('','_blank');
+    const num = sess.reservaNum || '—';
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Confirmación ${num}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'Space Mono',monospace;background:#fff;color:#111;padding:40px;max-width:600px;margin:0 auto}h1{font-size:1.3rem}h2{font-size:1rem;margin-top:2rem;border-top:1px solid #eee;padding-top:1rem}.row{display:flex;justify-content:space-between;margin:.4rem 0;font-size:.8rem}.row span{color:#666}.total{font-weight:700;font-size:1rem;border-top:1px solid #ddd;padding-top:.5rem;margin-top:.5rem}</style></head>
+    <body>
+      <div style="font-size:1.2rem;font-weight:700;letter-spacing:.1em">◈ LUXORIA</div>
+      <div style="font-size:.7rem;color:#666">Cadena Hotelera Internacional</div>
+      <h1>Confirmación de Reserva</h1>
+      <div style="font-size:1.1rem;color:#8b6914;font-weight:700">${num}</div>
+      <h2>Detalles de la estancia</h2>
+      <div class="row"><span>Hotel</span><span>${hotel?.nombre||'—'}</span></div>
+      <div class="row"><span>Habitación</span><span>${tipo?.nombre||'—'}</span></div>
+      <div class="row"><span>Check-in</span><span>${DateUtil.fmt(sess.entrada)}</span></div>
+      <div class="row"><span>Check-out</span><span>${DateUtil.fmt(sess.salida)}</span></div>
+      <div class="row"><span>Huésped</span><span>${sess.nombre} ${sess.apellido||''}</span></div>
+      <div class="row"><span>Email</span><span>${sess.email||'—'}</span></div>
+      <h2>Precio</h2>
+      <div class="row"><span>Subtotal</span><span>${fmtEur(sess.subtotal)}</span></div>
+      <div class="row"><span>IVA (${sess.ivaRate}%)</span><span>${fmtEur(sess.ivaAmt)}</span></div>
+      <div class="row total"><span>TOTAL</span><span>${fmtEur(sess.total)}</span></div>
+      <div style="margin-top:2rem;font-size:.7rem;color:#999">LUXORIA · CIF B-12345678 · info@luxoria.com</div>
+      <script>window.onload=function(){window.print()}<\/script>
+    </body></html>`);
+    w.document.close();
+  }
+  window.downloadConfirmation = downloadConfirmation;
+  </script>
+</body>
+</html>

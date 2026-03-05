@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Gastos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body class="admin-body">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebarToggle">☰</button>
+      <div class="topbar-breadcrumb"><span class="tb-muted">Admin</span><span class="tb-sep">›</span><span>Gastos</span></div>
+      <div class="topbar-actions"><span class="topbar-date" id="topbarDate"></span></div>
+    </header>
+    <div class="admin-content">
+      <div class="kpi-grid">
+        <div class="kpi-card reveal"><div class="kpi-icon" style="color:var(--gold)">◊</div><div class="kpi-body"><span class="kpi-label">Total gastos</span><span class="kpi-value" id="kpiTotal">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="60"><div class="kpi-icon" style="color:var(--green)">◈</div><div class="kpi-body"><span class="kpi-label">Monto total</span><span class="kpi-value" id="kpiMonto">—</span></div></div>
+        <div class="kpi-card reveal" data-delay="120"><div class="kpi-icon" style="color:var(--blue)">◎</div><div class="kpi-body"><span class="kpi-label">Gasto promedio</span><span class="kpi-value" id="kpiProm">—</span></div></div>
+        <div class="kpi-card reveal" data-delay="180"><div class="kpi-icon" style="color:#e05c5c">▣</div><div class="kpi-body"><span class="kpi-label">Gasto máximo</span><span class="kpi-value" id="kpiMax">—</span></div></div>
+      </div>
+      <div class="content-grid">
+        <div class="panel panel--wide reveal">
+          <div class="panel__header">
+            <div class="panel__title"><span class="panel-icon">◊</span>Registro de gastos</div>
+            <div class="panel__tools">
+              <select class="admin-select" id="filterEstancia"><option value="">Todas las estancias</option></select>
+              <select class="admin-select" id="filterTipo"><option value="">Todos los tipos</option><option value="Restaurante">Restaurante</option><option value="Spa">Spa</option><option value="Minibar">Minibar</option><option value="Room Service">Room Service</option><option value="Lavandería">Lavandería</option><option value="Teléfono">Teléfono</option><option value="Transporte">Transporte</option><option value="Otros">Otros</option></select>
+              <button class="btn-admin btn-admin--primary" id="btnNuevo">+ Agregar gasto</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table"><thead><tr><th>ID</th><th>Estancia / Cliente</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Monto</th><th>Acciones</th></tr></thead>
+            <tbody id="gastoBody"></tbody></table>
+          </div>
+          <div class="table-footer">
+            <span class="table-count" id="tableCount">—</span>
+            <span id="totalDisplay" style="font-size:.72rem;color:var(--gold)"></span>
+          </div>
+        </div>
+        <div class="panel reveal" data-delay="80">
+          <div class="panel__header"><div class="panel__title"><span class="panel-icon">◉</span>Gastos por tipo</div></div>
+          <div id="gastoChart" style="padding:1.2rem;display:flex;flex-direction:column;gap:.6rem;"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal__header"><div class="modal__title" id="modalTitle">Nuevo Gasto</div><button class="modal__close" id="modalClose">✕</button></div>
+      <div class="modal__body">
+        <form class="admin-form" id="gastoForm" novalidate>
+          <input type="hidden" id="fId"/>
+          <div class="admin-field"><label>Estancia <span class="req">*</span></label><select id="fEstancia" required><option value="">Seleccionar estancia…</option></select><span class="field-err" id="errEstancia"></span></div>
+          <div class="form-grid-2">
+            <div class="admin-field"><label>Tipo de gasto <span class="req">*</span></label><select id="fTipoGasto" required><option value="">Seleccionar…</option><option value="Restaurante">Restaurante</option><option value="Spa">Spa</option><option value="Minibar">Minibar</option><option value="Room Service">Room Service</option><option value="Lavandería">Lavandería</option><option value="Teléfono">Teléfono</option><option value="Transporte">Transporte</option><option value="Otros">Otros</option></select><span class="field-err" id="errTipoGasto"></span></div>
+            <div class="admin-field"><label>Monto (€) <span class="req">*</span></label><input type="number" id="fMonto" placeholder="45.00" min="0" step="0.01" required/><span class="field-err" id="errMonto"></span></div>
+          </div>
+          <div class="admin-field"><label>Descripción <span class="req">*</span></label><input type="text" id="fDescripcion" placeholder="Cena en restaurante El Jardín" required/><span class="field-err" id="errDescripcion"></span></div>
+          <div class="admin-field"><label>Fecha</label><input type="date" id="fFecha"/></div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="btnCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--primary" id="btnGuardar">Guardar gasto</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="deleteBackdrop">
+    <div class="modal modal--sm">
+      <div class="modal__header"><div class="modal__title">Eliminar gasto</div><button class="modal__close" id="deleteClose">✕</button></div>
+      <div class="modal__body"><div class="delete-confirm"><div class="delete-icon">⚠</div><p>¿Eliminar <strong id="deleteGastoName"></strong>?</p><p class="delete-sub">Esta acción no se puede deshacer.</p></div></div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="deleteCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--danger" id="deleteConfirm">Eliminar</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="js/sidebar.js"></script><script src="js/admin.js"></script><script src="js/data.js"></script><script src="js/gastos.js"></script>
+</body>
+</html>

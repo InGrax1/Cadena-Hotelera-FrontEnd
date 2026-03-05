@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXORIA — Reservaciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" /><link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin-body">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="topbar-menu" id="sidebarToggle">☰</button>
+      <div class="topbar-breadcrumb"><span class="tb-muted">Admin</span><span class="tb-sep">›</span><span>Reservaciones</span></div>
+      <div class="topbar-actions"><span class="topbar-date" id="topbarDate"></span></div>
+    </header>
+    <div class="admin-content">
+      <div class="kpi-grid">
+        <div class="kpi-card reveal"><div class="kpi-icon" style="color:var(--gold)">⬡</div><div class="kpi-body"><span class="kpi-label">Total reservas</span><span class="kpi-value" id="kpiTotal">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="60"><div class="kpi-icon" style="color:var(--gold)">◈</div><div class="kpi-body"><span class="kpi-label">Pendientes</span><span class="kpi-value" id="kpiPend">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="120"><div class="kpi-icon" style="color:var(--green)">◎</div><div class="kpi-body"><span class="kpi-label">Confirmadas</span><span class="kpi-value" id="kpiConf">0</span></div></div>
+        <div class="kpi-card reveal" data-delay="180"><div class="kpi-icon" style="color:#e05c5c">◇</div><div class="kpi-body"><span class="kpi-label">Canceladas</span><span class="kpi-value" id="kpiCanc">0</span></div></div>
+      </div>
+
+      <div class="content-grid">
+        <div class="panel panel--wide reveal">
+          <div class="panel__header">
+            <div class="panel__title"><span class="panel-icon">⬡</span>Reservaciones</div>
+            <div class="panel__tools">
+              <div class="search-box"><span class="search-icon">◎</span><input type="text" id="searchInput" placeholder="Buscar nombre…"/></div>
+              <select class="admin-select" id="filterEstado"><option value="">Todos los estados</option><option value="Pendiente">Pendiente</option><option value="Confirmada">Confirmada</option><option value="Cancelada">Cancelada</option></select>
+              <select class="admin-select" id="filterTipo"><option value="">Todos los tipos</option><option value="Particular">Particular</option><option value="Agencia">Agencia</option></select>
+              <button class="btn-admin btn-admin--primary" id="btnNuevo">+ Nueva reserva</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>ID</th><th>Tipo</th><th>Nombre / Agencia</th><th>Hotel deseado</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="reservaBody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span class="table-count" id="tableCount">—</span></div>
+        </div>
+        <div class="panel reveal" data-delay="80">
+          <div class="panel__header"><div class="panel__title"><span class="panel-icon">◎</span>Detalle</div></div>
+          <div class="detail-placeholder" id="detailPh"><div class="detail-ph-icon">⬡</div><p>Selecciona una<br/>reserva para ver detalles</p></div>
+          <div class="detail-content" id="detailContent" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Crear/Editar -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" style="max-width:640px">
+      <div class="modal__header"><div class="modal__title" id="modalTitle">Nueva Reservación</div><button class="modal__close" id="modalClose">✕</button></div>
+      <div class="modal__body">
+        <form class="admin-form" id="reservaForm" novalidate>
+          <input type="hidden" id="fId"/>
+          <!-- Tipo reservación -->
+          <div class="admin-field">
+            <label>Tipo de reservación <span class="req">*</span></label>
+            <div class="toggle-group" id="tipoToggle">
+              <button type="button" class="toggle-btn toggle-btn--active" data-val="Particular">◎ Particular</button>
+              <button type="button" class="toggle-btn" data-val="Agencia">⬡ Agencia de viaje</button>
+            </div>
+            <input type="hidden" id="fTipoReserva" value="Particular"/>
+          </div>
+          <!-- Datos base -->
+          <div class="form-grid-2">
+            <div class="admin-field"><label>Nombre completo <span class="req">*</span></label><input type="text" id="fNombre" placeholder="Juan García" required/><span class="field-err" id="errNombre"></span></div>
+            <div class="admin-field"><label>Teléfono <span class="req">*</span></label><input type="tel" id="fTelefono" placeholder="+34 600 123 456" required/><span class="field-err" id="errTelefono"></span></div>
+          </div>
+          <div class="admin-field"><label>Dirección</label><input type="text" id="fDireccion" placeholder="Calle, ciudad, país"/></div>
+          <!-- Agencia fields -->
+          <div id="agenciaSection" style="display:none">
+            <div class="section-divider"><span>Datos de la Agencia</span></div>
+            <div class="form-grid-2">
+              <div class="admin-field"><label>Nombre de agencia <span class="req">*</span></label><input type="text" id="fAgencia" placeholder="TourPlus S.A."/><span class="field-err" id="errAgencia"></span></div>
+              <div class="admin-field"><label>Persona hospedada <span class="req">*</span></label><input type="text" id="fHuesped" placeholder="Robert Johnson"/><span class="field-err" id="errHuesped"></span></div>
+            </div>
+          </div>
+          <!-- Hotel / hab -->
+          <div class="section-divider"><span>Preferencias de estancia</span></div>
+          <div class="form-grid-2">
+            <div class="admin-field"><label>Hotel deseado</label><select id="fHotel"><option value="">Sin preferencia</option></select></div>
+            <div class="admin-field"><label>Categoría deseada</label><select id="fCategoria"><option value="">Sin preferencia</option><option value="3">⭑⭑⭑ 3 Estrellas</option><option value="4">⭑⭑⭑⭑ 4 Estrellas</option><option value="5">⭑⭑⭑⭑⭑ 5 Estrellas</option></select></div>
+          </div>
+          <div class="admin-field"><label>Tipo de habitación <span class="req">*</span></label><select id="fTipoHab" required><option value="">Seleccionar…</option></select><span class="field-err" id="errTipoHab"></span></div>
+          <div class="form-grid-2">
+            <div class="admin-field"><label>Fecha entrada <span class="req">*</span></label><input type="date" id="fEntrada" required/><span class="field-err" id="errEntrada"></span></div>
+            <div class="admin-field"><label>Fecha salida <span class="req">*</span></label><input type="date" id="fSalida" required/><span class="field-err" id="errSalida"></span></div>
+          </div>
+          <div class="admin-field"><label>Estado</label><select id="fEstado"><option value="Pendiente">Pendiente</option><option value="Confirmada">Confirmada</option><option value="Cancelada">Cancelada</option></select></div>
+          <div class="admin-field"><label>Notas</label><textarea id="fNotas" rows="2" placeholder="Peticiones especiales…"></textarea></div>
+        </form>
+      </div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="btnCancelar">Cancelar</button>
+        <button class="btn-admin btn-admin--primary" id="btnGuardar">Guardar reserva</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="deleteBackdrop">
+    <div class="modal modal--sm">
+      <div class="modal__header"><div class="modal__title">Cancelar reserva</div><button class="modal__close" id="deleteClose">✕</button></div>
+      <div class="modal__body"><div class="delete-confirm"><div class="delete-icon">⚠</div><p>¿Cancelar la reserva de <strong id="deleteReservaName"></strong>?</p><p class="delete-sub">El estado cambiará a "Cancelada".</p></div></div>
+      <div class="modal__footer">
+        <button class="btn-admin btn-admin--ghost" id="deleteCancelar">Volver</button>
+        <button class="btn-admin btn-admin--danger" id="deleteConfirm">Sí, cancelar</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="js/sidebar.js"></script><script src="js/admin.js"></script><script src="js/data.js"></script><script src="js/reservaciones.js"></script>
+</body>
+</html>

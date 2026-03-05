@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Datos del Huésped</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container" style="max-width:960px">
+      <div class="booking-steps" id="bookingSteps"></div>
+      <div class="page-header">
+        <div class="page-header__eyebrow">Paso 4 de 6</div>
+        <h1 class="page-header__title">Datos del Huésped</h1>
+        <p class="page-header__sub">Completa tus datos para finalizar la reserva.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:2rem;align-items:start">
+        <div>
+          <!-- Tipo reservación -->
+          <div class="form-card">
+            <div class="form-card__title">◎ Tipo de reservación</div>
+            <div class="toggle-group" style="max-width:380px">
+              <button type="button" class="toggle-btn toggle-btn--active" data-val="Particular" onclick="setTipo('Particular')">◎ Particular</button>
+              <button type="button" class="toggle-btn" data-val="Agencia" onclick="setTipo('Agencia')">⬡ Agencia de viaje</button>
+            </div>
+          </div>
+ 
+          <!-- Datos personales -->
+          <div class="form-card">
+            <div class="form-card__title">◙ Datos personales</div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Nombre <span class="req">*</span></label>
+                <input type="text" id="fNombre" placeholder="María"/>
+                <span class="field-err" id="errNombre"></span>
+              </div>
+              <div class="form-field">
+                <label>Apellido <span class="req">*</span></label>
+                <input type="text" id="fApellido" placeholder="García"/>
+                <span class="field-err" id="errApellido"></span>
+              </div>
+              <div class="form-field">
+                <label>Correo electrónico <span class="req">*</span></label>
+                <input type="email" id="fEmail" placeholder="maria@email.com"/>
+                <span class="field-err" id="errEmail"></span>
+              </div>
+              <div class="form-field">
+                <label>Teléfono <span class="req">*</span></label>
+                <input type="tel" id="fTelefono" placeholder="+34 600 123 456"/>
+                <span class="field-err" id="errTelefono"></span>
+              </div>
+              <div class="form-field form-field--full">
+                <label>Dirección</label>
+                <input type="text" id="fDireccion" placeholder="Calle, ciudad, país"/>
+              </div>
+              <div class="form-field">
+                <label>Tipo de documento</label>
+                <select id="fTipoDoc">
+                  <option value="DNI">DNI</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                  <option value="NIE">NIE</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>N.º Documento <span class="req">*</span></label>
+                <input type="text" id="fDocumento" placeholder="12345678A"/>
+                <span class="field-err" id="errDocumento"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Agencia section (hidden by default) -->
+          <div class="form-card" id="agenciaCard" style="display:none">
+            <div class="form-card__title">⬡ Datos de la Agencia</div>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Nombre de agencia <span class="req">*</span></label>
+                <input type="text" id="fAgencia" placeholder="TourPlus S.A."/>
+                <span class="field-err" id="errAgencia"></span>
+              </div>
+              <div class="form-field">
+                <label>Persona hospedada <span class="req">*</span></label>
+                <input type="text" id="fHuesped" placeholder="Robert Johnson"/>
+                <span class="field-err" id="errHuesped"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-card">
+            <div class="form-card__title">◈ Peticiones especiales</div>
+            <div class="form-field">
+              <label>Notas o peticiones</label>
+              <textarea id="fNotas" rows="3" placeholder="Cuna, habitación en planta alta, alergias alimentarias…" style="background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-sm);padding:.75rem 1rem;color:var(--white);font-family:var(--font-mono);font-size:.72rem;outline:none;width:100%;resize:vertical"></textarea>
+            </div>
+          </div>
+
+          <button class="btn-full" id="btnContinue">Revisar y confirmar ›</button>
+          <a href="reserva-detalle.html" class="btn-secondary">← Volver al detalle</a>
+        </div>
+
+        <!-- Order summary sidebar -->
+        <div class="order-summary">
+          <div class="os-title">Tu reserva</div>
+          <div class="os-hotel-name" id="sideHotel"></div>
+          <div class="os-room" id="sideRoom"></div>
+          <div class="os-dates">
+            <div class="os-date"><div class="os-date-label">Entrada</div><div class="os-date-val" id="sideEntrada"></div></div>
+            <div class="os-date"><div class="os-date-label">Salida</div><div class="os-date-val" id="sideSalida"></div></div>
+          </div>
+          <div class="os-divider"></div>
+          <div class="os-total"><span>Total</span><strong id="sideTotal">—</strong></div>
+          <div id="sideSeason" style="margin-top:.6rem"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, renderStars, seasonBadge, fmtEur, buildClientNav, renderBookingSteps } = LuxClient;
+  buildClientNav();
+  renderBookingSteps(document.getElementById('bookingSteps'), 4);
+
+  const sess = BookingSession.get();
+  if (!sess.hotelId) window.location.href = 'busqueda.html';
+
+  const hotel = Data.hotelById(sess.hotelId), tipo = Data.tipoById(sess.tipoId);
+  document.getElementById('sideHotel').textContent = hotel?.nombre || '—';
+  document.getElementById('sideRoom').textContent  = tipo?.nombre || '—';
+  document.getElementById('sideEntrada').textContent = DateUtil.fmtShort(sess.entrada);
+  document.getElementById('sideSalida').textContent  = DateUtil.fmtShort(sess.salida);
+  document.getElementById('sideTotal').textContent   = fmtEur(sess.total);
+  if (sess.temporadaNombre) document.getElementById('sideSeason').innerHTML = seasonBadge({nombre:sess.temporadaNombre,tipo:sess.temporadaTipo});
+
+  /* Pre-fill from session if already filled */
+  if (sess.nombre)    document.getElementById('fNombre').value    = sess.nombre;
+  if (sess.apellido)  document.getElementById('fApellido').value  = sess.apellido;
+  if (sess.email)     document.getElementById('fEmail').value     = sess.email;
+  if (sess.telefono)  document.getElementById('fTelefono').value  = sess.telefono;
+  if (sess.direccion) document.getElementById('fDireccion').value = sess.direccion;
+  if (sess.documento) document.getElementById('fDocumento').value = sess.documento;
+
+  let tipoReserva = 'Particular';
+  function setTipo(t) {
+    tipoReserva = t;
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList[b.dataset.val===t?'add':'remove']('toggle-btn--active'));
+    document.getElementById('agenciaCard').style.display = t==='Agencia' ? 'block' : 'none';
+  }
+  window.setTipo = setTipo;
+
+  function clearErr() { document.querySelectorAll('.field-err').forEach(e=>e.textContent=''); document.querySelectorAll('.form-field--error').forEach(e=>e.classList.remove('form-field--error')); }
+  function setErr(fId, eId, msg) { document.getElementById(fId)?.parentElement?.classList.add('form-field--error'); const el=document.getElementById(eId);if(el)el.textContent=msg; }
+
+  document.getElementById('btnContinue').addEventListener('click', () => {
+    clearErr(); let ok = true;
+    const nombre = document.getElementById('fNombre').value.trim();
+    const apellido = document.getElementById('fApellido').value.trim();
+    const email = document.getElementById('fEmail').value.trim();
+    const telefono = document.getElementById('fTelefono').value.trim();
+    const documento = document.getElementById('fDocumento').value.trim();
+    if (!nombre)    { setErr('fNombre','errNombre','Nombre obligatorio.'); ok=false; }
+    if (!apellido)  { setErr('fApellido','errApellido','Apellido obligatorio.'); ok=false; }
+    if (!email)     { setErr('fEmail','errEmail','Email obligatorio.'); ok=false; }
+    if (!telefono)  { setErr('fTelefono','errTelefono','Teléfono obligatorio.'); ok=false; }
+    if (!documento) { setErr('fDocumento','errDocumento','Documento obligatorio.'); ok=false; }
+    if (tipoReserva==='Agencia') {
+      if (!document.getElementById('fAgencia').value.trim())  { setErr('fAgencia','errAgencia','Nombre de agencia obligatorio.'); ok=false; }
+      if (!document.getElementById('fHuesped').value.trim())  { setErr('fHuesped','errHuesped','Persona hospedada obligatoria.'); ok=false; }
+    }
+    if (!ok) return;
+    BookingSession.set({
+      nombre, apellido, email, telefono,
+      direccion: document.getElementById('fDireccion').value.trim(),
+      tipoDoc: document.getElementById('fTipoDoc').value,
+      documento,
+      tipoReserva,
+      agencia: document.getElementById('fAgencia').value.trim() || null,
+      huesped: document.getElementById('fHuesped').value.trim() || null,
+      notas: document.getElementById('fNotas').value.trim() || null,
+    });
+    window.location.href = 'confirmacion.html';
+  });
+  </script>
+</body>
+</html>

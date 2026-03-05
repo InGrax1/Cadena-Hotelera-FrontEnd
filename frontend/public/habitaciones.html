@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXORIA — Selección de Habitación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/><link rel="stylesheet" href="css/client.css"/>
+</head>
+<body>
+  <nav class="client-nav" id="clientNav"></nav>
+  <div class="client-page">
+    <div class="client-container">
+      <div class="booking-steps" id="bookingSteps"></div>
+      <div class="page-header">
+        <div class="page-header__eyebrow">Paso 2 de 6</div>
+        <h1 class="page-header__title" id="pageTitle">Selecciona tu Habitación</h1>
+        <p class="page-header__sub" id="pageSub"></p>
+      </div>
+      <!-- Dates bar -->
+      <div style="background:var(--bg-2);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:1rem 1.5rem;display:flex;gap:2rem;align-items:center;margin-bottom:2rem;flex-wrap:wrap">
+        <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Hotel</div><div id="sbHotelName" style="font-size:.82rem;color:var(--white)"></div></div>
+        <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Entrada</div><div id="sbEntradaLabel" style="font-size:.82rem;color:var(--white)"></div></div>
+        <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Salida</div><div id="sbSalidaLabel" style="font-size:.82rem;color:var(--white)"></div></div>
+        <div><div style="font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Noches</div><div id="sbNochesLabel" style="font-size:.82rem;color:var(--gold);font-weight:700"></div></div>
+        <a href="hotel-detalle.html" style="margin-left:auto;font-size:.6rem;color:var(--muted);text-decoration:none;border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.4rem .8rem">← Cambiar fechas</a>
+      </div>
+      <!-- Rooms -->
+      <div id="roomsContainer"></div>
+    </div>
+  </div>
+  <div id="clientToasts" class="toast-container"></div>
+  <script src="js/client.js"></script>
+  <script>
+  const { BookingSession, Data, DateUtil, renderStars, seasonBadge, fmtEur, buildClientNav, renderBookingSteps } = LuxClient;
+  buildClientNav('hoteles');
+  renderBookingSteps(document.getElementById('bookingSteps'), 2);
+
+  const params  = new URLSearchParams(window.location.search);
+  const sess    = BookingSession.get();
+  const hotelId = parseInt(params.get('hotel') || sess.hotelId || 1);
+  const hotel   = Data.hotelById(hotelId);
+  if (!hotel) window.location.href = 'busqueda.html';
+
+  const entrada = sess.entrada || DateUtil.today();
+  const salida  = sess.salida  || DateUtil.addDays(entrada, 1);
+  const noches  = DateUtil.nights(entrada, salida);
+
+  document.getElementById('pageTitle').textContent = `Habitaciones — ${hotel.nombre}`;
+  document.getElementById('pageSub').textContent   = `${renderStars(hotel.categoria)} ${hotel.ciudad}, ${hotel.pais}`;
+  document.getElementById('sbHotelName').textContent    = hotel.nombre;
+  document.getElementById('sbEntradaLabel').textContent = DateUtil.fmt(entrada);
+  document.getElementById('sbSalidaLabel').textContent  = DateUtil.fmt(salida);
+  document.getElementById('sbNochesLabel').textContent  = `${noches} noche${noches!==1?'s':''}`;
+
+  const ROOM_IMGS = {
+    1:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80',
+    2:'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&q=80',
+    3:'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600&q=80',
+    4:'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80',
+    5:'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80',
+    6:'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&q=80',
+    7:'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=600&q=80',
+  };
+  const FEATURES = {
+    1:['Cama King','Wi-Fi','Escritorio','Vista ciudad'],2:['Cama King o Twin','Wi-Fi','Bañera','Mini bar'],
+    3:['3 camas','Wi-Fi','Sofá','Nevera'],4:['Sala de estar','Jacuzzi','Butler','Mini bar VIP'],
+    5:['Zona salón','Ducha lluvia','Wi-Fi','Bañera'],6:['Varias habitaciones','Butler 24h','Terraza privada','Champán'],
+    7:['4 camas','Cocina','Salón familiar','Wi-Fi'],
+  };
+
+  const tipos = Data.tipos();
+  const available = tipos.filter(t => !!Data.getTarifa(hotelId, t.id, entrada));
+
+  document.getElementById('roomsContainer').innerHTML = available.length ? available.map(t => {
+    const tar = Data.getTarifa(hotelId, t.id, entrada);
+    const total = tar.precio * noches;
+    const feats = FEATURES[t.id] || [];
+    return `
+      <div class="room-card" style="margin-bottom:1.2rem">
+        <div class="room-card__img" style="min-height:220px">
+          <img src="${ROOM_IMGS[t.id]||ROOM_IMGS[1]}" alt="${t.nombre}" loading="lazy"/>
+        </div>
+        <div class="room-card__body">
+          <div class="room-card__name">${t.icono||'◎'} ${t.nombre}</div>
+          <div class="room-card__cap">⬡ Hasta ${t.capacidad} persona${t.capacidad!==1?'s':''}</div>
+          <p style="font-size:.68rem;color:var(--muted);margin-bottom:.8rem;line-height:1.6">${t.descripcion||''}</p>
+          <div class="room-card__features">${feats.map(f=>`<span class="room-feature-tag">${f}</span>`).join('')}</div>
+          ${tar.temporada ? `<div style="margin-bottom:.5rem">${seasonBadge(tar.temporada)}</div>` : ''}
+          <div class="room-card__footer">
+            <div class="room-price-block">
+              <div class="room-price-label">Por noche</div>
+              <div class="room-price">${fmtEur(tar.precio)} <span>/ noche</span></div>
+              <div style="font-size:.62rem;color:var(--muted);margin-top:.2rem">Total: ${fmtEur(total)} (${noches} noches)</div>
+            </div>
+            <button class="btn-reserve" onclick="selectRoom(${t.id})">Reservar esta habitación ›</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('')
+  : '<div style="text-align:center;padding:4rem;color:var(--muted)"><div style="font-size:2rem;opacity:.3">◎</div><p>No hay habitaciones disponibles para las fechas seleccionadas.</p></div>';
+
+  function selectRoom(tipoId) {
+    const tar = Data.getTarifa(hotelId, tipoId, entrada);
+    const tipo = Data.tipoById(tipoId);
+    const noches = DateUtil.nights(entrada, salida);
+    const subtotal = tar.precio * noches;
+    const ivaRate = Data.getIvaRate(hotelId);
+    const ivaAmt = subtotal * ivaRate / 100;
+    const total = subtotal + ivaAmt;
+    BookingSession.set({
+      hotelId, tipoId,
+      precio: tar.precio,
+      temporadaId: tar.temporada?.id || null,
+      temporadaNombre: tar.temporada?.nombre || null,
+      temporadaTipo: tar.temporada?.tipo || null,
+      subtotal, ivaRate, ivaAmt, total,
+    });
+    window.location.href = 'reserva-detalle.html';
+  }
+  window.selectRoom = selectRoom;
+  </script>
+</body>
+</html>
