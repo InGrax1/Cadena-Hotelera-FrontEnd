@@ -281,8 +281,7 @@
     if (!entrada || !salida) { showToast('Por favor selecciona fechas de entrada y salida.', 'error'); return; }
     if (salida <= entrada)   { showToast('La salida debe ser posterior a la entrada.', 'error'); return; }
     BookingSession.set({ hotelId, entrada, salida, huespedes: document.getElementById('bwHuespedes').value });
-    document.querySelector('[data-tab="habitaciones"]').click();
-    document.getElementById('tab-habitaciones').scrollIntoView({ behavior:'smooth' });
+    window.location.href = 'habitaciones.html?hotel=' + hotelId;
   });
 
   document.title = `LUXORIA — ${hotel.nombre}`;
