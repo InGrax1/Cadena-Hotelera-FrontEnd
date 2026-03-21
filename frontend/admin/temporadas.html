@@ -13,50 +13,7 @@
 <body class="admin-body">
 
   <!-- ─── SIDEBAR ──────────────────────────────────────────────── -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar__logo">
-      <span class="nav__logo-icon">◈</span>
-      <span class="nav__logo-text">LUXORIA</span>
-      <span class="sidebar__badge">Admin</span>
-    </div>
-    <nav class="sidebar__nav">
-      <span class="sidebar__group-label">Principal</span>
-      <a href="index.html" class="sidebar__link">
-        <span class="sl-icon">⌂</span> Landing Page
-      </a>
-      <span class="sidebar__group-label">Gestión</span>
-      <a href="hoteles.html" class="sidebar__link">
-        <span class="sl-icon">▣</span> Hoteles
-      </a>
-      <a href="categorias.html" class="sidebar__link">
-        <span class="sl-icon">◇</span> Categorías
-      </a>
-      <a href="habitaciones-tipo.html" class="sidebar__link">
-        <span class="sl-icon">◎</span> Tipos de Habitación
-      </a>
-      <a href="temporadas.html" class="sidebar__link sidebar__link--active">
-        <span class="sl-icon">◉</span> Temporadas
-      </a>
-      <a href="#" class="sidebar__link sidebar__link--soon">
-        <span class="sl-icon">◈</span> Reservas <span class="soon-tag">pronto</span>
-      </a>
-      <a href="#" class="sidebar__link sidebar__link--soon">
-        <span class="sl-icon">⬡</span> Huéspedes <span class="soon-tag">pronto</span>
-      </a>
-      <a href="#" class="sidebar__link sidebar__link--soon">
-        <span class="sl-icon">◉</span> Facturación <span class="soon-tag">pronto</span>
-      </a>
-    </nav>
-    <div class="sidebar__footer">
-      <div class="sidebar__user">
-        <div class="sidebar__avatar">A</div>
-        <div>
-          <div class="sidebar__uname">Admin</div>
-          <div class="sidebar__urole">Superusuario</div>
-        </div>
-      </div>
-    </div>
-  </aside>
+  <aside class="sidebar" id="sidebar"></aside>
 
   <!-- ─── MAIN ─────────────────────────────────────────────────── -->
   <main class="admin-main">
@@ -288,7 +245,9 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
+  <script src="js/sidebar.js"></script>
   <script src="js/admin.js"></script>
-  <script src="js/temporadas.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/hoteles.js"></script>
 </body>
 </html>
