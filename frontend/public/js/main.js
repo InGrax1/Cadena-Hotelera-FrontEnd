@@ -5,12 +5,15 @@
 'use strict';
 
 /* ── SCROLL NAV ──────────────────────────────────────────────── */
+/*
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 }, { passive: true });
+*/
 
 /* ── HAMBURGER MENU ──────────────────────────────────────────── */
+/*
 const hamburger = document.getElementById('hamburger');
 hamburger?.addEventListener('click', () => {
   nav.classList.toggle('open');
@@ -19,7 +22,7 @@ hamburger?.addEventListener('click', () => {
 document.addEventListener('click', (e) => {
   if (!nav.contains(e.target)) nav.classList.remove('open');
 });
-
+*/
 /* ── REVEAL ON SCROLL ────────────────────────────────────────── */
 const revealObserver = new IntersectionObserver(
   (entries) => {

@@ -12,23 +12,7 @@
 <body>
 
   <!-- ─── NAV ──────────────────────────────────────────────────── -->
-  <nav class="nav" id="nav">
-    <div class="nav__logo">
-      <span class="nav__logo-icon">◈</span>
-      <span class="nav__logo-text">LUXORIA</span>
-    </div>
-    <ul class="nav__links">
-      <li><a href="#hoteles">Hoteles</a></li>
-      <li><a href="#reservas">Reservas</a></li>
-      <li><a href="#categorias">Categorías</a></li>
-      <li><a href="#servicios">Servicios</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-    </ul>
-    <a href="#reservas" class="nav__cta">Reservar ahora</a>
-    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
+  <div id="navPlaceholder"></div>
 
   <!-- ─── HERO ─────────────────────────────────────────────────── -->
   <section class="hero" id="inicio">
@@ -472,7 +456,7 @@
         <h2 class="cta-title">Tu próxima<br/><em>aventura</em><br/>te espera.</h2>
         <p class="cta-sub">Más de 1,200 habitaciones disponibles en 40 hoteles de lujo alrededor del mundo.</p>
         <div class="cta-actions">
-          <a href="#reservas" class="btn-primary">Reservar ahora →</a>
+          <a href="busqueda.html" class="btn-primary">Reservar ahora →</a>
           <a href="#hoteles" class="btn-ghost">Explorar hoteles</a>
         </div>
       </div>
@@ -544,8 +528,10 @@
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/nav.js"></script>
   <script src="js/client.js"></script>
+  <script src="js/main.js"></script>
+  
   <script>
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -563,5 +549,6 @@
       });
     });
 </script>
+
 </body>
 </html>
